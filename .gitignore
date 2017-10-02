@@ -1,4 +1,5 @@
-out/*
+out/
 .gradle/
 build/
 .idea/
+arrange-anything.log

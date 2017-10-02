@@ -33,3 +33,14 @@ dependencies {
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-title': 'Gradle Jar File Example',
+                'Implementation-Version': '1.0',
+                'Main-Class': 'com.company.k0zak.ServerKt'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}}
+    with jar
+}
