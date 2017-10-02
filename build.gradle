@@ -13,10 +13,14 @@ buildscript {
 }
 
 apply plugin: 'kotlin'
+apply plugin: 'application'
 
 repositories {
     mavenCentral()
 }
+
+defaultTasks 'run'
+mainClassName = 'com.company.k0zak.ServerKt'
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
