@@ -1,0 +1,31 @@
+group 'arrange-anything'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.1.50'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile group: "org.http4k", name: "http4k-core", version: "2.29.0"
+    compile group: "org.http4k", name: "http4k-server-jetty", version: "2.29.0"
+    compile group: "org.http4k", name: "http4k-client-okhttp", version: "2.29.0"
+    testCompile 'junit:junit:4.12'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
