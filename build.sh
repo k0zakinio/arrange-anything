@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./gradlew build 
-docker build -t aa .
+./gradlew clean build fatJar
+docker build -t aa2 .

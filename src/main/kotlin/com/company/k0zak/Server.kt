@@ -11,5 +11,10 @@ import org.http4k.server.Jetty
 
 fun main(args: Array<String>) {
     val app: RoutingHttpHandler = routes("/new" bind Method.GET to {_ : Request -> Response(Status.OK).body("Yo, how's it going!?")})
-    Jetty(8080).toServer(app).start()
+
+    val port = 80
+    println("Server started on port: $port")
+    Jetty(port).toServer(app).start()
+
+
 }

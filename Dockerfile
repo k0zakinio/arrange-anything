@@ -9,6 +9,6 @@ COPY        build/libs/arrange-anything-all-1.0-SNAPSHOT.jar /code/runnable.jar
 
 RUN         update-ca-certificates -f
 
-EXPOSE      8080
+EXPOSE      80
 
 CMD         java -jar /code/runnable.jar
