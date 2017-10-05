@@ -8,7 +8,8 @@ import org.http4k.server.Jetty
 
 fun main(args: Array<String>) {
     val app: RoutingHttpHandler = routes(
-            "/new" bind Method.GET to Routes.routesNew
+            "/event" bind Method.GET to Routes.GET.event,
+            "/event" bind Method.POST to Routes.POST.event
     )
 
     val port = 8080
