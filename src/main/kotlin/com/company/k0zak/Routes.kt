@@ -7,8 +7,6 @@ import java.sql.Connection
 import java.sql.DriverManager
 
 object Routes {
-    private val url = "jdbc:testuser:testpassword//127.0.0.1:5432/testdb"
-    val con: Connection = DriverManager.getConnection(url)
 
     object GET {
         val event: HttpHandler = {
@@ -19,12 +17,16 @@ object Routes {
 
     object POST {
         val event: HttpHandler = {
+            println("trying some shit")
+            Class.forName("org.postgresql.Driver")
+            val url = "jdbc:postgresql://172.17.0.2:5432/testdb"
+            val con: Connection = DriverManager.getConnection(url, "testuser", "testpassword")
+
             val query = "INSERT TABLE foo (id SERIAL PRIMARY KEY, title TEXT);"
-            val prepareCall = con.prepareCall(query)
+            val statement = con.createStatement()
+            statement.execute(query)
 
             println("should be calling query: $query")
-
-            prepareCall.execute()
 
             Response(Status.CREATED).body("Something was meant to be created :)")
         }

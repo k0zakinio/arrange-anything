@@ -5,9 +5,9 @@ services:
     ports:
      - "8080:8080"
   postgres:
-    image: "postgres"
+    image: "postgres:9.6"
     volumes:
-          - ./data/postgres:/var/lib/postgresql/data
+          - /var/lib/postgres/data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=testuser
       - POSTGRES_PASSWORD=testpassword
