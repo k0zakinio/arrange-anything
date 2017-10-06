@@ -12,6 +12,7 @@ object Routes {
 
     object GET {
         val event: HttpHandler = {
+            println("something something something")
             Response(Status.OK).body("Nice one :)")
         }
     }
