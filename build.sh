@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 RUNNING_DOCKER_CONTAINERS=$(docker ps | awk 'NR>1 { print $1 }')
 docker kill ${RUNNING_DOCKER_CONTAINERS}
 ./gradlew clean build fatJar
-docker-compose build --no-cache
-docker-compose up
+docker rm arrange-anything
+docker build -t arrange-anything .
