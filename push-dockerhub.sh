@@ -2,4 +2,5 @@
 
 ./build.sh
 docker login --username $DOCKERHUB_USERNAME --password $DOCKERHUB_PASSWORD
-docker push arrange-anything
+docker tag arrange-anything k0zakinio/arrange-anything
+docker push k0zakinio/arrange-anything
