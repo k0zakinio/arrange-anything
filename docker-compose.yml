@@ -3,6 +3,6 @@ services:
   web:
     image: "k0zakinio/arrange-anything"
     ports:
-     - "8080:8080"
+     - "9999:9999"
   postgres:
     image: "postgres"

@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
             "/event" bind Method.POST to Routes.POST.event
     )
 
-    val port = 8080
+    val port = 9999
     println("Server started on port: $port")
     Jetty(port).toServer(app).start()
 }
