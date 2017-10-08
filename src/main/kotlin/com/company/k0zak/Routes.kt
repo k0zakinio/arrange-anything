@@ -22,7 +22,7 @@ object Routes {
             val url = "jdbc:postgresql://172.17.0.2:5432/testdb"
             val con: Connection = DriverManager.getConnection(url, "testuser", "testpassword")
 
-            val query = "INSERT TABLE foo (id SERIAL PRIMARY KEY, title TEXT);"
+            val query = "CREATE TABLE foo (id SERIAL PRIMARY KEY, title TEXT);"
             val statement = con.createStatement()
             statement.execute(query)
 
