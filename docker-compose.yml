@@ -7,7 +7,7 @@ services:
   postgres:
     image: "postgres:9.6"
     volumes:
-          - /var/lib/postgres/data:/var/lib/postgresql/data
+          - /var/lib/postgres/data:/var/lib/postgres/data
     environment:
       - POSTGRES_USER=testuser
       - POSTGRES_PASSWORD=testpassword
