@@ -19,8 +19,8 @@ object Routes {
         val event: HttpHandler = {
             println("trying some shit")
             Class.forName("org.postgresql.Driver")
-            val url = "jdbc:postgresql://172.17.0.2:5432/testdb"
-            val con: Connection = DriverManager.getConnection(url, "testuser", "testpassword")
+            val url = "jdbc:postgresql://172.18.0.2:5432/testdb"
+            val con: Connection = DriverManager.getConnection(url, "postgres", "testpassword")
 
             val query = "CREATE TABLE foo (id SERIAL PRIMARY KEY, title TEXT);"
             val statement = con.createStatement()
