@@ -10,23 +10,22 @@ object Routes {
 
     object GET {
         val event: HttpHandler = {
-            println("something something something")
             Response(Status.OK).body("Nice one :)")
         }
     }
 
     object POST {
         val event: HttpHandler = {
-            println("trying some shit")
             Class.forName("org.postgresql.Driver")
-            val url = "jdbc:postgresql://172.18.0.2:5432/testdb"
+            val url = "jdbc:postgresql://postgres.local:5432/testdb"
             val con: Connection = DriverManager.getConnection(url, "postgres", "testpassword")
 
-            val query = "CREATE TABLE foo (id SERIAL PRIMARY KEY, title TEXT);"
-            val statement = con.createStatement()
-            statement.execute(query)
+            val statement = con.prepareStatement("INSERT INTO EVENTS (title, owner_name) VALUES (?, ?)")
+            statement.setString(1, "My First Event")
+            statement.setString(2, "Andrew")
+            statement.execute()
 
-            println("should be calling query: $query")
+            println("should be calling query...")
 
             Response(Status.CREATED).body("Something was meant to be created :)")
         }

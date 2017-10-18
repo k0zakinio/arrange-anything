@@ -5,7 +5,7 @@ services:
     ports:
      - "8080:8080"
     links:
-     - "postgres"
+     - "postgres:postgres.local"
   postgres:
     image: "postgres:9.6"
     ports:
