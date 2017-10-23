@@ -6,7 +6,7 @@ import org.http4k.lens.string
 import java.sql.Connection
 import java.sql.DriverManager
 
-object Routes {
+object EventRoute {
 
     object GET {
 

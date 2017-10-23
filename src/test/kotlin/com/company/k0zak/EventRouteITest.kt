@@ -7,7 +7,7 @@ import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
 import org.junit.Test
 
-class RoutesITest {
+class EventRouteITest {
 
     private val okHttpClient = OkHttp()
 
