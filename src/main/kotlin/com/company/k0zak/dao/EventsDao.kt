@@ -1,17 +1,11 @@
-package com.company.k0zak
+package com.company.k0zak.dao
 
+import com.company.k0zak.db.PostgresClient
 import com.company.k0zak.model.Event
-import java.sql.Connection
-import java.sql.DriverManager
 
-object EventTransformer {
-
-    private val driver = Class.forName("org.postgresql.Driver")
-    private val url = "jdbc:postgresql://postgres.local:5432/testdb"
-    private val con: Connection = DriverManager.getConnection(url, "postgres", "testpassword")
-
+class EventsDao(private val pgClient: PostgresClient) {
     fun insertEvent(event: Event) {
-        val statement = con.prepareStatement("INSERT INTO EVENTS (owner_name, title) VALUES (?, ?)")
+        val statement = pgClient.preparedStatement("INSERT INTO EVENTS (owner_name, title) VALUES (?, ?)")
         statement.setString(1, event.owner)
         statement.setString(2, event.title)
         statement.execute()
@@ -19,9 +13,8 @@ object EventTransformer {
     }
 
     fun getAllEvents(): List<Event> {
-        val statement = con.prepareStatement("SELECT * FROM EVENTS")
+        val statement = pgClient.preparedStatement("SELECT * FROM EVENTS")
         val executeQuery = statement.executeQuery()
-
         val result = mutableListOf<Event>()
 
         while (executeQuery.next()) {

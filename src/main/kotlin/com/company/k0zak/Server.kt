@@ -1,15 +1,20 @@
 package com.company.k0zak
 
-import org.http4k.core.*
+import com.company.k0zak.routes.EventsRoute
+import org.http4k.core.Method
 import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.server.Jetty
-object App {
+
+object Server {
     fun start() {
+
+        val eventRoute = EventsRoute(Dependencies.eventsDao)
+
         val app: RoutingHttpHandler = routes(
-                "/event" bind Method.GET to EventRoute.GET.event,
-                "/event" bind Method.POST to EventRoute.POST.event
+                "/events" bind Method.GET to eventRoute.get,
+                "/events" bind Method.POST to eventRoute.post
         )
 
         val port = 8080
@@ -19,5 +24,5 @@ object App {
 }
 
 fun main(args: Array<String>) {
-    App.start()
+    Server.start()
 }
