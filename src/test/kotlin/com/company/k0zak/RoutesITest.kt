@@ -1,40 +1,33 @@
 package com.company.k0zak
 
-import org.flywaydb.core.Flyway
+import com.company.k0zak.db_helpers.DBHelper
 import org.http4k.client.OkHttp
 import org.http4k.core.*
 import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
 import org.junit.Test
 
-class EventHandlerITest {
+class RoutesITest {
 
     private val okHttpClient = OkHttp()
 
     companion object {
         @BeforeClass @JvmStatic fun beforeAll() {
             App.start()
-            cleanDatabase()
-        }
-
-        private fun cleanDatabase() {
-            val flyway = Flyway()
-            flyway.setDataSource("jdbc:postgresql://postgres.local:5432/testdb", "postgres", "testpassword")
-            flyway.clean()
-            flyway.migrate()
+            DBHelper.cleanDatabase()
         }
     }
 
     @Test
-    fun canInsertQueriesIntoTheDatabase() {
-        val response = insertEvent("testOwner", "testTitle")
+    fun canPostNewEvent() {
+        val response = postEvent("testOwner", "testTitle")
 
         assertEquals(Status.CREATED, response.status)
     }
 
     @Test
-    fun canRetrieveEventsFromTheDatabase() {
-        insertEvent("getTest", "getTestTitle")
+    fun canGetEvents() {
+        postEvent("getTest", "getTestTitle")
         val request = Request(Method.GET, "http://localhost:8080/event?owner=getTest")
 
         val response = okHttpClient(request)
@@ -42,7 +35,7 @@ class EventHandlerITest {
         assertEquals("[{\"title\" : \"getTestTitle\", \"owner\" : \"getTest\"}]", response.bodyString())
     }
 
-    private fun insertEvent(owner: String, title: String): Response {
+    private fun postEvent(owner: String, title: String): Response {
         val body = MultipartFormBody()
                 .plus("owner" to owner)
                 .plus("title" to title)
