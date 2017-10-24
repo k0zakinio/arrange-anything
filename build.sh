@@ -10,19 +10,9 @@ function stop_postgres_if_running () {
     fi
 }
 
-function remove_arrange-anything_container () {
-    ARRANGE_ANYTHING_CONTAINER=$(docker ps -a | grep 'arrange-anything' | awk '{ print $1 }')
-    if [ ${ARRANGE_ANYTHING_CONTAINER} ]
-    then
-        docker rm ${ARRANGE_ANYTHING_CONTAINER}
-        docker rmi k0zakinio/arrange-anything
-        docker rmi arrange-anything
-    fi
-}
-
 stop_postgres_if_running
 docker-compose down
-remove_arrange-anything_container
+./remove_arrange_anything.sh
 ./start-postgres.sh
 ./gradlew clean build fatJar --stacktrace
 docker build -t k0zakinio/arrange-anything . 
