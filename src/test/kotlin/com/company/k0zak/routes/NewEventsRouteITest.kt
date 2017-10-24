@@ -5,6 +5,7 @@ import com.company.k0zak.db_helpers.DBHelper
 import com.company.k0zak.model.Event
 import org.http4k.client.OkHttp
 import org.http4k.core.*
+import org.http4k.lens.*
 import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
 import org.junit.Test
@@ -28,11 +29,14 @@ class NewEventsRouteITest {
     }
 
     private fun postEvent(event: Event): Response {
-        val body = Body.invoke("{\"owner\":\"${event.owner}\",\"title\":\"${event.title}\"}")
+        val titleField = FormField.string().required("title")
+        val ownerField = FormField.string().required("owner")
 
-        val request = Request(Method.POST, "http://localhost:8080/events")
-                .body(body)
-                .header("Content-Type", "application/json")
+        val lens = Body.webForm(Validator.Strict, titleField, ownerField).toLens()
+
+        val webForm = WebForm().with(titleField of event.title).with(ownerField of event.owner)
+
+        val request = Request(Method.POST, "http://localhost:8080/new").with(lens of webForm)
 
         return okHttpClient(request)
     }
