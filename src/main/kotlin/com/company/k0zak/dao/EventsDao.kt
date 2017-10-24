@@ -24,4 +24,12 @@ class EventsDao(private val pgClient: PostgresClient) {
         }
         return result
     }
+
+    fun getEventForId(id: String): Event? {
+        val statement = pgClient.preparedStatement("SELECT * FROM EVENTS WHERE id = ?")
+        statement.setInt(1, id.toInt())
+        val executeQuery = statement.executeQuery()
+
+        return if(executeQuery.next()) return Event(executeQuery.getString(2), executeQuery.getString(3)) else null
+    }
 }

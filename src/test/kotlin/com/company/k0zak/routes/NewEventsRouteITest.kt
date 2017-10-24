@@ -9,7 +9,7 @@ import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
 import org.junit.Test
 
-class EventsRouteITest {
+class NewEventsRouteITest {
 
     private val okHttpClient = OkHttp()
 
@@ -25,16 +25,6 @@ class EventsRouteITest {
         val response = postEvent(Event("testOwner", "testTitle"))
 
         assertEquals(Status.CREATED, response.status)
-    }
-
-    @Test
-    fun canGetEvents() {
-        postEvent(Event("getTest", "getTestTitle"))
-        val request = Request(Method.GET, "http://localhost:8080/events")
-
-        val response = okHttpClient(request)
-
-        assertEquals("[{\"owner\":\"getTest\",\"title\":\"getTestTitle\"}]", response.bodyString())
     }
 
     private fun postEvent(event: Event): Response {

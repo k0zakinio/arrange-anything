@@ -5,13 +5,7 @@ import com.company.k0zak.model.Event
 import org.http4k.core.*
 import org.http4k.format.Jackson.auto
 
-class EventsRoute(private val eventsDao: EventsDao) {
-
-    val get: HttpHandler = {
-        val responseLens = Body.auto<List<Event>>().toLens()
-        val allEvents = eventsDao.getAllEvents()
-        responseLens.inject(allEvents, Response(Status.OK))
-    }
+class NewEventsRoute(private val eventsDao: EventsDao) {
 
     val post: HttpHandler = { req: Request ->
         val eventLens = Body.auto<Event>().toLens()
