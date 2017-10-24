@@ -10,11 +10,11 @@ import org.http4k.server.Jetty
 object Server {
     fun start() {
 
-        val eventRoute = EventsRoute(Dependencies.eventsDao)
+        val events = EventsRoute(Dependencies.eventsDao)
 
         val app: RoutingHttpHandler = routes(
-                "/events" bind Method.GET to eventRoute.get,
-                "/events" bind Method.POST to eventRoute.post
+                "/events" bind Method.GET to events.get,
+                "/events" bind Method.POST to events.post
         )
 
         val port = 8080
