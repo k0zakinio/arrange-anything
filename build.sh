@@ -11,11 +11,12 @@ function stop_postgres_if_running () {
 }
 
 function remove_arrange-anything_container () {
-    ARRANGE_ANYTHING_CONTAINER=$(docker ps | grep 'arrange-anything' | awk '{ print $1 }')
+    ARRANGE_ANYTHING_CONTAINER=$(docker ps -a | grep 'arrange-anything' | awk '{ print $1 }')
     if [ ${ARRANGE_ANYTHING_CONTAINER} ]
     then
         docker rm ${ARRANGE_ANYTHING_CONTAINER}
         docker rmi k0zakinio/arrange-anything
+        docker rmi arrange-anything
     fi
 }
 
