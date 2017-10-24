@@ -11,10 +11,10 @@ services:
     ports:
      - "5432:5432"
     volumes:
-          - ./database:/var/lib/postgresql/data
+          - postgres9.6_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=testpassword
       - POSTGRES_DB=testdb
 
 volumes:
-  postgres9.6_data:
+  postgres9.6_data: /var/lib/aa_postgres_data
