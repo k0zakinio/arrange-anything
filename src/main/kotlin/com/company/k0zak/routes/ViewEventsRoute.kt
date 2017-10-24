@@ -11,7 +11,8 @@ import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.ViewModel
 
 class ViewEventsRoute(private val eventsDao: EventsDao) {
-    private val renderer = HandlebarsTemplates().HotReload("src/main/resources/view")
+
+    private val renderer = HandlebarsTemplates().CachingClasspath("view")
 
     val byId: HttpHandler = {
         val id: String = it.path("id")!!

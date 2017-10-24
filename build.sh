@@ -24,6 +24,6 @@ stop_postgres_if_running
 docker-compose down
 remove_arrange-anything_container
 ./start-postgres.sh
-./gradlew clean build fatJar
-docker build -t k0zakinio/arrange-anything .
+./gradlew clean build fatJar --stacktrace
+docker build -t k0zakinio/arrange-anything . 
 stop_postgres_if_running
