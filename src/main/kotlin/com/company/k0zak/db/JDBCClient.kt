@@ -4,16 +4,16 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.PreparedStatement
 
-class PostgresClient(pgConfig: PgConfig) {
+class JDBCClient(jdbcConfig: JDBCConfig) {
 
     init {
-        Class.forName("org.postgresql.Driver")
+        Class.forName(jdbcConfig.driver)
     }
 
     private val con: Connection = DriverManager.getConnection(
-            pgConfig.toUri(),
-            pgConfig.username,
-            pgConfig.password
+            jdbcConfig.toUri(),
+            jdbcConfig.username,
+            jdbcConfig.password
     )
 
     fun preparedStatement(sql: String): PreparedStatement {

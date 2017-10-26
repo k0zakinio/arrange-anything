@@ -13,7 +13,6 @@ object Server {
         val viewEvents = ViewEventsRoute(Dependencies.eventsDao)
 
         val app: RoutingHttpHandler = routes(
-//                "/new" bind Method.GET to newEvents.create,
                 "/new" bind Method.POST to newEvents.newPost,
                 "/view/{id}" bind Method.GET to viewEvents.byId,
                 "/view" bind Method.GET to viewEvents.all,

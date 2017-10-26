@@ -1,9 +1,9 @@
 package com.company.k0zak.dao
 
-import com.company.k0zak.db.PostgresClient
+import com.company.k0zak.db.JDBCClient
 import com.company.k0zak.model.Event
 
-class EventsDao(private val pgClient: PostgresClient) {
+class EventsDao(private val pgClient: JDBCClient) {
     fun insertEvent(event: Event) {
         val statement = pgClient.preparedStatement("INSERT INTO EVENTS (owner_name, title) VALUES (?, ?)")
         statement.setString(1, event.owner)
