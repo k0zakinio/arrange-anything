@@ -13,6 +13,7 @@ import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
 import org.junit.Test
 import org.openqa.selenium.By
+import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 
@@ -44,13 +45,11 @@ class EndToEndTest {
     fun canInsertAnEventAndThenViewIt() {
         driver.get("http://localhost:8080/new")
 
-        val ownerElem = driver.findElementById("owner")
-        ownerElem.sendKeys("I am an Owner")
-
-        val titleElem = driver.findElementById("title")
-        titleElem.sendKeys("I am a Title")
-
-        ownerElem.submit()
+        getElementByIdAndExecute("owner", { it.sendKeys("I am an Owner") })
+        getElementByIdAndExecute("title", {
+            it.sendKeys("I am a Title")
+            it.submit()
+        })
 
         driver.get("http://localhost:8080/view/1")
 
@@ -62,26 +61,29 @@ class EndToEndTest {
     fun canCreateANewAccountAndLogin() {
         driver.get("http://localhost:8080/create-account")
 
-        val unameElem = driver.findElementById("username")
-        val pwordElem = driver.findElementById("password")
+        getElementByIdAndExecute("username", { it.sendKeys("andrew") })
+        getElementByIdAndExecute("password", {
+            it.sendKeys("password")
+            it.submit()
+        })
 
-        unameElem.sendKeys("andrew")
-        pwordElem.sendKeys("this_is_my_password")
-
-        unameElem.submit()
         WebDriverWait(driver, 1).until(ExpectedConditions.textToBePresentInElementLocated(By.id("banner"), "Account created"))
 
         driver.findElementById("login").click()
 
-        val loginUsername = driver.findElementById("username")
-        val loginPassword = driver.findElementById("password")
-
-        loginUsername.sendKeys("andrew")
-        loginPassword.sendKeys("this_is_my_password")
-
-        loginUsername.submit()
+        getElementByIdAndExecute("username", { it.sendKeys("andrew") })
+        getElementByIdAndExecute("password", {
+            it.sendKeys("password")
+            it.submit()
+        })
 
         WebDriverWait(driver, 3).until(ExpectedConditions.textToBePresentInElementLocated(By.id("banner"), "Welcome andrew"))
+    }
+
+    private fun getElementByIdAndExecute(id: String, fn: (WebElement) -> Any): WebElement {
+        val findElementById: WebElement = driver.findElementById(id)
+        fn(findElementById)
+        return findElementById
     }
 }
 
