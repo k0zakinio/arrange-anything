@@ -7,12 +7,10 @@ object DBHelper {
 
     private val flyway = Flyway()
     val testConfig: JDBCConfig = JDBCConfig(
-            username = "postgres",
-            password = "testpassword",
-            hostname = "postgres.local",
-            port = 5432,
-            dbName = "testdb",
-            driver = "org.postgresql.Driver"
+            username = "sa",
+            password = "",
+            driver = "org.h2.Driver",
+            uri = null
     )
 
     init {

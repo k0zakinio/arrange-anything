@@ -3,9 +3,9 @@ package com.company.k0zak.dao
 import com.company.k0zak.db.JDBCClient
 import com.company.k0zak.model.Event
 
-class EventsDao(private val pgClient: JDBCClient) {
+class EventsDao(private val dbClient: JDBCClient) {
     fun insertEvent(event: Event) {
-        val statement = pgClient.preparedStatement("INSERT INTO EVENTS (owner_name, title) VALUES (?, ?)")
+        val statement = dbClient.preparedStatement("INSERT INTO EVENTS (owner_name, title) VALUES (?, ?)")
         statement.setString(1, event.owner)
         statement.setString(2, event.title)
         statement.execute()
@@ -13,7 +13,7 @@ class EventsDao(private val pgClient: JDBCClient) {
     }
 
     fun getAllEvents(): List<Event> {
-        val statement = pgClient.preparedStatement("SELECT * FROM EVENTS")
+        val statement = dbClient.preparedStatement("SELECT * FROM EVENTS")
         val executeQuery = statement.executeQuery()
         val result = mutableListOf<Event>()
 
@@ -26,7 +26,7 @@ class EventsDao(private val pgClient: JDBCClient) {
     }
 
     fun getEventForId(id: String): Event? {
-        val statement = pgClient.preparedStatement("SELECT * FROM EVENTS WHERE id = ?")
+        val statement = dbClient.preparedStatement("SELECT * FROM EVENTS WHERE id = ?")
         statement.setInt(1, id.toInt())
         val executeQuery = statement.executeQuery()
 
