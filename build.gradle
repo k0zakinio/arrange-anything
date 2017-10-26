@@ -41,6 +41,12 @@ dependencies {
     compile group: 'org.postgresql', name: 'postgresql', version: '42.1.4'
     compile group: 'org.flywaydb', name: 'flyway-core', version: '4.2.0'
     testCompile 'junit:junit:4.12'
+
+    testCompile group: 'com.h2database', name: 'h2', version: '1.4.196'
+    testCompile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.6.0'
+
+
+
 }
 
 flyway {
