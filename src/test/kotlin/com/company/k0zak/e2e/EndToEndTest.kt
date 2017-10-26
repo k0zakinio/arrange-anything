@@ -1,25 +1,32 @@
 package com.company.k0zak.e2e
 
 import com.company.k0zak.Server
+import com.company.k0zak.UserAuthenticator
 import com.company.k0zak.dao.EventsDao
-import com.company.k0zak.db.JDBCClient
-import com.company.k0zak.db_helpers.DBHelper
+import com.company.k0zak.dao.UserDao
+import com.company.k0zak.db_helpers.TestDBHelper
+import com.company.k0zak.db_helpers.TestDBHelper.testDbClient
 import com.company.k0zak.web_helpers.TestDrivers
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
 import org.junit.Test
+import org.openqa.selenium.By
+import org.openqa.selenium.support.ui.ExpectedConditions
+import org.openqa.selenium.support.ui.WebDriverWait
 
 class EndToEndTest {
 
     private val driver = TestDrivers.getChromeDriver()
 
     companion object {
-        private val server = Server(EventsDao(JDBCClient(DBHelper.testConfig)))
+        private val eventsDao = EventsDao(testDbClient)
+        private val userDao = UserDao(testDbClient, UserAuthenticator())
+        private val server = Server(eventsDao, userDao)
         @BeforeClass @JvmStatic fun beforeAll() {
             server.start()
-            DBHelper.cleanDatabase()
+            TestDBHelper.cleanDatabase()
         }
 
         @AfterClass
@@ -49,6 +56,32 @@ class EndToEndTest {
 
         val event = driver.findElementByTagName("h2")
         assertEquals(event.text, "Owner: I am a Title | Title: I am an Owner")
+    }
+
+    @Test
+    fun canCreateANewAccountAndLogin() {
+        driver.get("http://localhost:8080/create-account")
+
+        val unameElem = driver.findElementById("username")
+        val pwordElem = driver.findElementById("password")
+
+        unameElem.sendKeys("andrew")
+        pwordElem.sendKeys("this_is_my_password")
+
+        unameElem.submit()
+        WebDriverWait(driver, 1).until(ExpectedConditions.textToBePresentInElementLocated(By.id("banner"), "Account created"))
+
+        driver.findElementById("login").click()
+
+        val loginUsername = driver.findElementById("username")
+        val loginPassword = driver.findElementById("password")
+
+        loginUsername.sendKeys("andrew")
+        loginPassword.sendKeys("this_is_my_password")
+
+        loginUsername.submit()
+
+        WebDriverWait(driver, 3).until(ExpectedConditions.textToBePresentInElementLocated(By.id("banner"), "Welcome andrew"))
     }
 }
 

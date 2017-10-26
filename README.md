@@ -4,13 +4,13 @@ A platform for being able to arrange events.  All developed using TDD, my baby s
 
 ## User Stories
 
-As a User
+*As a User
 So that I can arrange something
-I would like to be able to be able to create a new event with a title
+I would like to be able to be able to create a new event with a title*
 
-As a User
+*As a User
 So that I can continue to view my arranged event
-I would like to be able to go back and view a previously created event
+I would like to be able to go back and view a previously created event*
 
 As a User
 So I don't have to always include my name as the Owner

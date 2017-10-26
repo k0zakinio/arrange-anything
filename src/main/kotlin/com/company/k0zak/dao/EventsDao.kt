@@ -22,6 +22,7 @@ class EventsDao(private val dbClient: JDBCClient) {
             val title = executeQuery.getString(3)
             result.add(Event(title, owner))
         }
+        executeQuery.close()
         return result
     }
 

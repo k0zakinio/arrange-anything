@@ -1,7 +1,7 @@
 package com.company.k0zak.dao
 
-import com.company.k0zak.db.JDBCClient
-import com.company.k0zak.db_helpers.DBHelper
+import com.company.k0zak.db_helpers.TestDBHelper
+import com.company.k0zak.db_helpers.TestDBHelper.testDbClient
 import com.company.k0zak.model.Event
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -9,11 +9,11 @@ import org.junit.Test
 
 class EventsDaoTest {
 
-    private val eventsDao = EventsDao(JDBCClient(DBHelper.testConfig))
+    private val eventsDao = EventsDao(testDbClient)
 
     @Before
     fun beforeEach() {
-        DBHelper.cleanDatabase()
+        TestDBHelper.cleanDatabase()
     }
 
     @Test

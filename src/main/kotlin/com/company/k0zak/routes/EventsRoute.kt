@@ -6,12 +6,12 @@ import org.http4k.core.*
 import org.http4k.format.Jackson.auto
 import org.http4k.lens.*
 
-class NewEventsRoute(private val eventsDao: EventsDao) {
+class EventsRoute(private val eventsDao: EventsDao) {
 
     data class JsonResponse(val message: String)
     private val responseLens = Body.auto<JsonResponse>().toLens()
 
-    val newPost: HttpHandler = { req: Request ->
+    val new: HttpHandler = { req: Request ->
         val ownerField = FormField.string().required("owner")
         val titleField = FormField.string().required("title")
 
