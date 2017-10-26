@@ -18,7 +18,7 @@ class NewEventsRouteITest {
     private val okHttpClient = OkHttp()
 
     companion object {
-        val server = Server(EventsDao(JDBCClient(DBHelper.testConfig)))
+        private val server = Server(EventsDao(JDBCClient(DBHelper.testConfig)))
         @BeforeClass @JvmStatic fun beforeAll() {
             server.start()
             DBHelper.cleanDatabase()
@@ -32,7 +32,6 @@ class NewEventsRouteITest {
     @Test
     fun canPostNewEvent() {
         val response = postEvent(Event("testOwner", "testTitle"))
-
         assertEquals(Status.CREATED, response.status)
     }
 

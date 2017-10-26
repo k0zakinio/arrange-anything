@@ -8,7 +8,7 @@ import org.http4k.routing.*
 import org.http4k.server.Http4kServer
 import org.http4k.server.Jetty
 
-class Server(val eventsDao: EventsDao) {
+class Server(private val eventsDao: EventsDao) {
     private lateinit var server: Http4kServer
 
     fun start() {

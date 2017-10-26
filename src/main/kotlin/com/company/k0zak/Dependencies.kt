@@ -8,7 +8,7 @@ object Dependencies {
     private val pgConfig = JDBCConfig(
             username = "postgres",
             password = "testpassword",
-            uri = "postgresql://postgres.local:5432/testdb",
+            uri = "postgres.local:5432/testdb",
             driver = "org.postgresql.Driver"
     )
     private val pgClient = JDBCClient(pgConfig)
