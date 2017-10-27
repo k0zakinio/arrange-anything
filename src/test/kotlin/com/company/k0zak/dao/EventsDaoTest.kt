@@ -3,7 +3,8 @@ package com.company.k0zak.dao
 import com.company.k0zak.db_helpers.TestDBHelper
 import com.company.k0zak.db_helpers.TestDBHelper.testDbClient
 import com.company.k0zak.model.Event
-import org.junit.Assert.assertEquals
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.hasElement
 import org.junit.Before
 import org.junit.Test
 
@@ -21,6 +22,6 @@ class EventsDaoTest {
         val event = Event("transform_owner", "transform_title")
         eventsDao.insertEvent(event)
 
-        assertEquals(eventsDao.getAllEvents().first(), event)
+        assertThat(eventsDao.getAllEvents(), hasElement(event))
     }
 }

@@ -38,15 +38,14 @@ dependencies {
     compile group: "org.http4k", name: "http4k-server-jetty", version: project.http4k_version
     compile group: "org.http4k", name: "http4k-client-okhttp", version: project.http4k_version
     compile group: "org.http4k", name: "http4k-format-jackson", version: project.http4k_version
+
     compile group: 'org.postgresql', name: 'postgresql', version: '42.1.4'
     compile group: 'org.flywaydb', name: 'flyway-core', version: '4.2.0'
-    testCompile 'junit:junit:4.12'
 
+    testCompile 'junit:junit:4.12'
     testCompile group: 'com.h2database', name: 'h2', version: '1.4.196'
     testCompile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.6.0'
-
-
-
+    testCompile group: 'com.natpryce', name: 'hamkrest', version: '1.4.2.2'
 }
 
 flyway {

@@ -1,6 +1,7 @@
 package com.company.k0zak
 
-import org.junit.Assert.*
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.Test
 
 class PasswordHasherTest {
@@ -9,14 +10,14 @@ class PasswordHasherTest {
     fun shouldBeAbleToCalculateTheHash() {
         val password = "testyMcTestFace"
         val hashedPassword = PasswordHasher.getSaltedHash(password)
-        assertTrue(PasswordHasher.check(password, hashedPassword))
+        assertThat(PasswordHasher.check(password, hashedPassword), equalTo(true))
     }
 
     @Test
     fun shouldDetectWhenHashesDontMatch() {
         val password = "testyMcTestFace"
         val hashedPassword = PasswordHasher.getSaltedHash(password)
-        assertFalse(PasswordHasher.check("NOT_testyMcTestFace", hashedPassword))
+        assertThat(PasswordHasher.check("NOT_testyMcTestFace", hashedPassword), equalTo(false))
     }
 
     @Test(expected = IllegalStateException::class)

@@ -7,9 +7,10 @@ import com.company.k0zak.dao.UserDao
 import com.company.k0zak.db_helpers.TestDBHelper
 import com.company.k0zak.db_helpers.TestDBHelper.testDbClient
 import com.company.k0zak.web_helpers.TestDrivers
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.After
 import org.junit.AfterClass
-import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
 import org.junit.Test
 import org.openqa.selenium.By
@@ -54,7 +55,7 @@ class EndToEndTest {
         driver.get("http://localhost:8080/view/1")
 
         val event = driver.findElementByTagName("h2")
-        assertEquals(event.text, "Owner: I am a Title | Title: I am an Owner")
+        assertThat(event.text, equalTo("Owner: I am a Title | Title: I am an Owner"))
     }
 
     @Test

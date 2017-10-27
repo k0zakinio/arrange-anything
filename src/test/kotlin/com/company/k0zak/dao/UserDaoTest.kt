@@ -5,7 +5,8 @@ import com.company.k0zak.db_helpers.TestDBHelper
 import com.company.k0zak.db_helpers.TestDBHelper.testDbClient
 import com.company.k0zak.model.AuthenticatedUser
 import com.company.k0zak.model.User
-import org.junit.Assert.assertEquals
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.Before
 import org.junit.Test
 
@@ -25,6 +26,6 @@ class UserDaoTest {
 
         val authenticatedUser = AuthenticatedUser("Mr Andrew")
 
-        assertEquals(userDao.getUser(user), authenticatedUser)
+        assertThat(userDao.getUser(user), equalTo(authenticatedUser))
     }
 }
