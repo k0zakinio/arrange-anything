@@ -28,7 +28,7 @@ object PasswordHasher {
      * to a stored salted hash of the password.  */
     @Throws(Exception::class)
     fun check(password: String, stored: String): Boolean {
-        val saltAndPass = stored.split("\\$".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val saltAndPass = stored.split("\\$".toRegex()).toTypedArray()
         if (saltAndPass.size != 2) {
             throw IllegalStateException(
                     "The stored password have the form 'salt\$hash'")

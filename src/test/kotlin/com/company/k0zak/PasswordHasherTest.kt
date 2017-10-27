@@ -9,6 +9,18 @@ class PasswordHasherTest {
     fun shouldBeAbleToCalculateTheHash() {
         val password = "testyMcTestFace"
         val hashedPassword = PasswordHasher.getSaltedHash(password)
-        assertTrue(PasswordHasher.check("testyMcTestFace", hashedPassword))
+        assertTrue(PasswordHasher.check(password, hashedPassword))
+    }
+
+    @Test
+    fun shouldDetectWhenHashesDontMatch() {
+        val password = "testyMcTestFace"
+        val hashedPassword = PasswordHasher.getSaltedHash(password)
+        assertFalse(PasswordHasher.check("NOT_testyMcTestFace", hashedPassword))
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun shouldThrowWhenHashDoesntMatchFormat() {
+        PasswordHasher.check("foobar", "blabla")
     }
 }
