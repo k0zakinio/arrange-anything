@@ -1,5 +1,6 @@
 package com.company.k0zak.e2e
 
+import com.company.k0zak.PasswordHasher
 import com.company.k0zak.Server
 import com.company.k0zak.UserAuthenticator
 import com.company.k0zak.dao.EventsDao
@@ -9,6 +10,8 @@ import com.company.k0zak.db_helpers.TestDBHelper.testDbClient
 import com.company.k0zak.web_helpers.TestDrivers
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.isNullOrBlank
+import org.http4k.core.cookie.Cookie
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.BeforeClass
@@ -17,6 +20,7 @@ import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
+import org.openqa.selenium.Cookie as SeleniumCookie
 
 class EndToEndTest {
 
@@ -24,8 +28,8 @@ class EndToEndTest {
 
     companion object {
         private val eventsDao = EventsDao(testDbClient)
-        private val userDao = UserDao(testDbClient, UserAuthenticator())
-        private val server = Server(eventsDao, userDao)
+        private val userDao = UserDao(testDbClient)
+        private val server = Server(eventsDao, userDao, UserAuthenticator(PasswordHasher()))
         @BeforeClass @JvmStatic fun beforeAll() {
             server.start()
             TestDBHelper.cleanDatabase()
@@ -79,6 +83,10 @@ class EndToEndTest {
         })
 
         WebDriverWait(driver, 3).until(ExpectedConditions.textToBePresentInElementLocated(By.id("banner"), "Welcome andrew"))
+        val cookie = driver.manage().cookies.first().toHttp4kCookie()
+        assertThat(cookie.name, equalTo("aa_session_id"))
+        assertThat(cookie.path, equalTo("/"))
+        assertThat(cookie.value, !isNullOrBlank)
     }
 
     private fun getElementByIdAndExecute(id: String, fn: (WebElement) -> Any): WebElement {
@@ -86,5 +94,7 @@ class EndToEndTest {
         fn(findElementById)
         return findElementById
     }
+
+    private fun SeleniumCookie.toHttp4kCookie(): Cookie = Cookie(name = this.name, value = this.value.replace("\"", ""), path = this.path)
 }
 

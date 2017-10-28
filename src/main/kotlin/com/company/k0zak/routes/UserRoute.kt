@@ -1,13 +1,17 @@
 package com.company.k0zak.routes
 
+import com.company.k0zak.UserAuthenticator
 import com.company.k0zak.dao.UserDao
+import com.company.k0zak.model.AuthenticatedUser
 import com.company.k0zak.model.User
 import org.http4k.core.*
+import org.http4k.core.cookie.Cookie
+import org.http4k.core.cookie.cookie
 import org.http4k.lens.*
 import org.http4k.template.HandlebarsTemplates
+import java.util.*
 
-class UserRoute(userDao: UserDao) {
-    data class JsonResponse(val message: String)
+class UserRoute(userDao: UserDao, userAuthenticator: UserAuthenticator) {
 
     private val renderer = HandlebarsTemplates().CachingClasspath("view")
 
@@ -21,7 +25,7 @@ class UserRoute(userDao: UserDao) {
             val username = usernameField.extract(webForm)
             val password = passwordField.extract(webForm)
 
-            val user = User(username, password)
+            val user = User(username, userAuthenticator.hash(password))
             userDao.newUser(user)
 
             Response(Status.SEE_OTHER).header("Location", "/created")
@@ -36,14 +40,12 @@ class UserRoute(userDao: UserDao) {
         try {
             val webForm = formBody.extract(req)
             val username = usernameField.extract(webForm)
-            val password = passwordField.extract(webForm)
 
-            val user = User(username, password)
-
-            val authenticatedUser = userDao.getUser(user)
-            if(authenticatedUser != null) {
-                val rendered = renderer(authenticatedUser)
-                Response(Status.OK).body(rendered)
+            val user = userDao.getUser(username)
+            if(user != null) {
+                val cookie = Cookie("aa_session_id", userAuthenticator.hash(UUID.randomUUID().toString()))
+                val rendered = renderer(AuthenticatedUser(username))
+                Response(Status.OK).body(rendered).cookie(cookie)
             } else Response(Status.FORBIDDEN).body("Invalid username or password!")
         } catch (e:LensFailure) {
             e.printStackTrace()

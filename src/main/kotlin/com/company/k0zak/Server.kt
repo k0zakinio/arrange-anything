@@ -11,13 +11,13 @@ import org.http4k.routing.*
 import org.http4k.server.Http4kServer
 import org.http4k.server.Jetty
 
-class Server(private val eventsDao: EventsDao, private val userDao: UserDao) {
+class Server(private val eventsDao: EventsDao, private val userDao: UserDao, private val userAuthenticator: UserAuthenticator) {
     private lateinit var server: Http4kServer
 
     fun start() {
         val newEvents = EventsRoute(eventsDao)
         val viewEvents = ViewEventsRoute(eventsDao)
-        val userRoute = UserRoute(userDao)
+        val userRoute = UserRoute(userDao, userAuthenticator)
 
         val app: RoutingHttpHandler = routes(
                 "/new" bind GET to static(ResourceLoader.Classpath("public/new")),
@@ -42,5 +42,5 @@ class Server(private val eventsDao: EventsDao, private val userDao: UserDao) {
 }
 
 fun main(args: Array<String>) {
-    Server(Dependencies.eventsDao, Dependencies.userDao).start()
+    Server(Dependencies.eventsDao, Dependencies.userDao, Dependencies.userAuthenticator).start()
 }

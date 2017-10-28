@@ -2,8 +2,8 @@ package com.company.k0zak
 
 import com.company.k0zak.dao.EventsDao
 import com.company.k0zak.dao.UserDao
-import com.company.k0zak.db.JDBCConfig
 import com.company.k0zak.db.JDBCClient
+import com.company.k0zak.db.JDBCConfig
 
 object Dependencies {
     private val pgConfig = JDBCConfig(
@@ -14,6 +14,7 @@ object Dependencies {
     )
     private val pgClient = JDBCClient(pgConfig)
     val eventsDao = EventsDao(pgClient)
-    val userDao: UserDao = UserDao(pgClient, UserAuthenticator())
+    val userDao: UserDao = UserDao(pgClient)
+    val userAuthenticator = UserAuthenticator(PasswordHasher())
 }
 

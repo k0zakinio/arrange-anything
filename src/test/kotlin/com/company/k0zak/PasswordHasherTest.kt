@@ -6,22 +6,24 @@ import org.junit.Test
 
 class PasswordHasherTest {
 
+    private val passwordHasher = PasswordHasher()
+
     @Test
     fun shouldBeAbleToCalculateTheHash() {
         val password = "testyMcTestFace"
-        val hashedPassword = PasswordHasher.getSaltedHash(password)
-        assertThat(PasswordHasher.check(password, hashedPassword), equalTo(true))
+        val hashedPassword = passwordHasher.hashString(password)
+        assertThat(passwordHasher.check(password, hashedPassword), equalTo(true))
     }
 
     @Test
     fun shouldDetectWhenHashesDontMatch() {
         val password = "testyMcTestFace"
-        val hashedPassword = PasswordHasher.getSaltedHash(password)
-        assertThat(PasswordHasher.check("NOT_testyMcTestFace", hashedPassword), equalTo(false))
+        val hashedPassword = passwordHasher.hashString(password)
+        assertThat(passwordHasher.check("NOT_testyMcTestFace", hashedPassword), equalTo(false))
     }
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowWhenHashDoesntMatchFormat() {
-        PasswordHasher.check("foobar", "blabla")
+        passwordHasher.check("foobar", "blabla")
     }
 }

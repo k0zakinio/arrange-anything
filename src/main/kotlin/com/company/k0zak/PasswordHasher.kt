@@ -6,7 +6,7 @@ import java.security.SecureRandom
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
-object PasswordHasher {
+class PasswordHasher: Hasher {
     // The higher the number of iterations the more
     // expensive computing the hash is for us and
     // also for an attacker.
@@ -17,8 +17,7 @@ object PasswordHasher {
     /** Computes a salted PBKDF2 hash of given plaintext password
      * suitable for storing in a database.
      * Empty passwords are not supported.  */
-    @Throws(Exception::class)
-    fun getSaltedHash(password: String): String {
+    override fun hashString(password: String): String {
         val salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltLen)
         // store the salt with the password
         return BASE64Encoder().encode(salt) + "$" + hash(password, salt)
@@ -26,8 +25,7 @@ object PasswordHasher {
 
     /** Checks whether given plaintext password corresponds
      * to a stored salted hash of the password.  */
-    @Throws(Exception::class)
-    fun check(password: String, stored: String): Boolean {
+    override fun check(password: String, stored: String): Boolean {
         val saltAndPass = stored.split("\\$".toRegex()).toTypedArray()
         if (saltAndPass.size != 2) {
             throw IllegalStateException(
