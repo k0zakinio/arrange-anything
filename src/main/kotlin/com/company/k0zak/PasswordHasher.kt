@@ -17,21 +17,21 @@ class PasswordHasher: Hasher {
     /** Computes a salted PBKDF2 hash of given plaintext password
      * suitable for storing in a database.
      * Empty passwords are not supported.  */
-    override fun hashString(password: String): String {
+    override fun hashString(text: String): String {
         val salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltLen)
         // store the salt with the password
-        return BASE64Encoder().encode(salt) + "$" + hash(password, salt)
+        return BASE64Encoder().encode(salt) + "$" + hash(text, salt)
     }
 
     /** Checks whether given plaintext password corresponds
      * to a stored salted hash of the password.  */
-    override fun check(password: String, stored: String): Boolean {
+    override fun check(current: String, stored: String): Boolean {
         val saltAndPass = stored.split("\\$".toRegex()).toTypedArray()
         if (saltAndPass.size != 2) {
             throw IllegalStateException(
                     "The stored password have the form 'salt\$hash'")
         }
-        val hashOfInput = hash(password, BASE64Decoder().decodeBuffer(saltAndPass[0]))
+        val hashOfInput = hash(current, BASE64Decoder().decodeBuffer(saltAndPass[0]))
         return hashOfInput == saltAndPass[1]
     }
 

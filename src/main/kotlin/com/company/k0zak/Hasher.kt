@@ -1,7 +1,7 @@
 package com.company.k0zak
 
 interface Hasher {
-    fun hashString(str: String): String
+    fun hashString(text: String): String
 
-    fun check(stored: String, current: String): Boolean
+    fun check(current: String, stored: String): Boolean
 }

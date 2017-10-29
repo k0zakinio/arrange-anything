@@ -1,6 +1,6 @@
 # ArrangeAnything
 
-A platform for being able to arrange events.  All developed using TDD, my baby side project to test my knowledge and playing around with new technologies.
+A platform for being able to arrange events.  All developed using TDD, my baby side project to test my knowledge and playing around with postNew technologies.
 
 ## Tech
 
@@ -14,7 +14,7 @@ A platform for being able to arrange events.  All developed using TDD, my baby s
 ### DONE
 *As a User
 So that I can arrange something
-I would like to be able to be able to create a new event with a title*
+I would like to be able to be able to create a postNew event with a title*
 
 *As a User
 So that I can continue to view my arranged event

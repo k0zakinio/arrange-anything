@@ -2,6 +2,7 @@ package com.company.k0zak.dao
 
 import com.company.k0zak.db.JDBCClient
 import com.company.k0zak.model.Event
+import java.sql.ResultSet
 
 class EventsDao(private val dbClient: JDBCClient) {
     fun insertEvent(event: Event) {
@@ -14,16 +15,7 @@ class EventsDao(private val dbClient: JDBCClient) {
 
     fun getAllEvents(): List<Event> {
         val statement = dbClient.preparedStatement("SELECT * FROM EVENTS")
-        val executeQuery = statement.executeQuery()
-        val result = mutableListOf<Event>()
-
-        while (executeQuery.next()) {
-            val owner = executeQuery.getString(2)
-            val title = executeQuery.getString(3)
-            result.add(Event(title, owner))
-        }
-        executeQuery.close()
-        return result
+        return statement.executeQuery().use { resultSetToListOfEvents(it) }
     }
 
     fun getEventForId(id: String): Event? {
@@ -31,6 +23,20 @@ class EventsDao(private val dbClient: JDBCClient) {
         statement.setInt(1, id.toInt())
         val executeQuery = statement.executeQuery()
 
-        return if(executeQuery.next()) return Event(executeQuery.getString(2), executeQuery.getString(3)) else null
+        return if(executeQuery.next()) return Event(executeQuery.getString(3), executeQuery.getString(2)) else null
+    }
+
+    fun getEventsForUser(ownerName: String): List<Event> {
+        val statement = dbClient.preparedStatement("SELECT * FROM EVENTS WHERE owner_name = ?")
+        statement.setString(1, ownerName)
+        return statement.executeQuery().use { resultSetToListOfEvents(it) }
+    }
+
+    private fun resultSetToListOfEvents(rs: ResultSet): List<Event> {
+        val result = mutableListOf<Event>()
+        while (rs.next()) {
+            result.add(Event(rs.getString(3), rs.getString(2)))
+        }
+        return result
     }
 }

@@ -18,7 +18,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
-import org.openqa.selenium.support.ui.ExpectedConditions
+import org.openqa.selenium.support.ui.ExpectedConditions.textToBePresentInElementLocated
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.openqa.selenium.Cookie as SeleniumCookie
 
@@ -29,7 +29,7 @@ class EndToEndTest {
     companion object {
         private val eventsDao = EventsDao(testDbClient)
         private val userDao = UserDao(testDbClient)
-        private val server = Server(eventsDao, userDao, UserAuthenticator(PasswordHasher()))
+        private val server = Server(eventsDao, userDao, UserAuthenticator(PasswordHasher(), userDao))
         @BeforeClass @JvmStatic fun beforeAll() {
             server.start()
             TestDBHelper.cleanDatabase()
@@ -47,49 +47,50 @@ class EndToEndTest {
     }
 
     @Test
-    fun canInsertAnEventAndThenViewIt() {
-        driver.get("http://localhost:8080/new")
+    fun `you must be logged in to create an event`() {
+        driver.get("http://localhost:8080/postNew")
 
-        getElementByIdAndExecute("owner", { it.sendKeys("I am an Owner") })
-        getElementByIdAndExecute("title", {
-            it.sendKeys("I am a Title")
-            it.submit()
-        })
+        val banner = driver.findElementByTagName("h2")
 
-        driver.get("http://localhost:8080/view/1")
-
-        val event = driver.findElementByTagName("h2")
-        assertThat(event.text, equalTo("Owner: I am a Title | Title: I am an Owner"))
+        assertThat(banner.text, equalTo("You are not authorized to access this resource."))
     }
 
     @Test
-    fun canCreateANewAccountAndLogin() {
-        driver.get("http://localhost:8080/create-account")
+    fun `can create an account, login and have a cookie set`() {
+        createAccount("andrew", "password")
+        login("andrew", "password")
+        WebDriverWait(driver, 1)
+                .until(textToBePresentInElementLocated(By.id("banner"), "Welcome andrew"))
 
-        getElementByIdAndExecute("username", { it.sendKeys("andrew") })
-        getElementByIdAndExecute("password", {
-            it.sendKeys("password")
-            it.submit()
-        })
-
-        WebDriverWait(driver, 1).until(ExpectedConditions.textToBePresentInElementLocated(By.id("banner"), "Account created"))
-
-        driver.findElementById("login").click()
-
-        getElementByIdAndExecute("username", { it.sendKeys("andrew") })
-        getElementByIdAndExecute("password", {
-            it.sendKeys("password")
-            it.submit()
-        })
-
-        WebDriverWait(driver, 3).until(ExpectedConditions.textToBePresentInElementLocated(By.id("banner"), "Welcome andrew"))
         val cookie = driver.manage().cookies.first().toHttp4kCookie()
         assertThat(cookie.name, equalTo("aa_session_id"))
         assertThat(cookie.path, equalTo("/"))
         assertThat(cookie.value, !isNullOrBlank)
     }
 
-    private fun getElementByIdAndExecute(id: String, fn: (WebElement) -> Any): WebElement {
+    private fun login(username: String, password: String) {
+        getElementByIdAndThen("login", { it.click() })
+
+        getElementByIdAndThen("username", { it.sendKeys(username) })
+        getElementByIdAndThen("password", {
+            it.sendKeys(password)
+            it.submit()
+        })
+    }
+
+    private fun createAccount(username: String, password: String) {
+        driver.get("http://localhost:8080/create-account")
+
+        getElementByIdAndThen("username", { it.sendKeys(username) })
+        getElementByIdAndThen("password", {
+            it.sendKeys(password)
+            it.submit()
+        })
+
+        WebDriverWait(driver, 1).until(textToBePresentInElementLocated(By.id("banner"), "Account created"))
+    }
+
+    private fun getElementByIdAndThen(id: String, fn: (WebElement) -> Any): WebElement {
         val findElementById: WebElement = driver.findElementById(id)
         fn(findElementById)
         return findElementById
