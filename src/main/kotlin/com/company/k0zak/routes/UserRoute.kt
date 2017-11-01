@@ -1,7 +1,7 @@
 package com.company.k0zak.routes
 
 import com.company.k0zak.UserAuthenticator
-import com.company.k0zak.dao.UserDao
+import com.company.k0zak.dao.PostgresUserDao
 import com.company.k0zak.model.AuthenticatedUser
 import com.company.k0zak.model.User
 import org.http4k.core.*
@@ -11,7 +11,7 @@ import org.http4k.lens.*
 import org.http4k.template.HandlebarsTemplates
 import java.util.*
 
-class UserRoute(userDao: UserDao, userAuthenticator: UserAuthenticator) {
+class UserRoute(userDao: PostgresUserDao, userAuthenticator: UserAuthenticator) {
 
     private val renderer = HandlebarsTemplates().CachingClasspath("view")
 
@@ -40,10 +40,13 @@ class UserRoute(userDao: UserDao, userAuthenticator: UserAuthenticator) {
         try {
             val webForm = formBody.extract(req)
             val username = usernameField.extract(webForm)
-
+            val password = passwordField.extract(webForm)
             val user = userDao.getUser(username)
-            if(user != null) {
-                val cookie = Cookie("aa_session_id", userAuthenticator.hash(UUID.randomUUID().toString()))
+
+            if(user != null && userAuthenticator.authenticated(user.password, password)) {
+                val sessionId = userAuthenticator.hash(UUID.randomUUID().toString())
+                userDao.newSession(user, sessionId)
+                val cookie = Cookie("aa_session_id", sessionId)
                 val rendered = renderer(AuthenticatedUser(username))
                 Response(Status.OK).body(rendered).cookie(cookie)
             } else Response(Status.FORBIDDEN).body("Invalid username or password!")

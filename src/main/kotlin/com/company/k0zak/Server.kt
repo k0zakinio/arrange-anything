@@ -1,7 +1,7 @@
 package com.company.k0zak
 
 import com.company.k0zak.dao.EventsDao
-import com.company.k0zak.dao.UserDao
+import com.company.k0zak.dao.PostgresUserDao
 import com.company.k0zak.routes.EventsRoute
 import com.company.k0zak.routes.UserRoute
 import com.company.k0zak.routes.ViewEventsRoute
@@ -11,7 +11,7 @@ import org.http4k.routing.*
 import org.http4k.server.Http4kServer
 import org.http4k.server.Jetty
 
-class Server(private val eventsDao: EventsDao, private val userDao: UserDao, private val userAuthenticator: UserAuthenticator) {
+class Server(private val eventsDao: EventsDao, private val userDao: PostgresUserDao, private val userAuthenticator: UserAuthenticator) {
     private lateinit var server: Http4kServer
 
     fun start() {
@@ -20,8 +20,8 @@ class Server(private val eventsDao: EventsDao, private val userDao: UserDao, pri
         val viewEvents = ViewEventsRoute(eventsDao, userAuthenticator)
 
         val app: RoutingHttpHandler = routes(
-                "/postNew" bind GET to newEvents.getNew,
-                "/postNew" bind POST to newEvents.postNew,
+                "/new" bind GET to newEvents.getNew,
+                "/new" bind POST to newEvents.postNew,
                 "/view" bind GET to viewEvents.all,
                 "/view/{id}" bind GET to viewEvents.byId,
                 "/create-account" bind GET to static(ResourceLoader.Classpath("public/create-account")),

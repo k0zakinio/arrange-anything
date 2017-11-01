@@ -4,7 +4,7 @@ import com.company.k0zak.PasswordHasher
 import com.company.k0zak.Server
 import com.company.k0zak.UserAuthenticator
 import com.company.k0zak.dao.EventsDao
-import com.company.k0zak.dao.UserDao
+import com.company.k0zak.dao.PostgresUserDao
 import com.company.k0zak.db_helpers.TestDBHelper
 import com.company.k0zak.db_helpers.TestDBHelper.testDbClient
 import com.company.k0zak.web_helpers.TestDrivers
@@ -16,10 +16,7 @@ import org.junit.After
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.junit.Test
-import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
-import org.openqa.selenium.support.ui.ExpectedConditions.textToBePresentInElementLocated
-import org.openqa.selenium.support.ui.WebDriverWait
 import org.openqa.selenium.Cookie as SeleniumCookie
 
 class EndToEndTest {
@@ -28,7 +25,7 @@ class EndToEndTest {
 
     companion object {
         private val eventsDao = EventsDao(testDbClient)
-        private val userDao = UserDao(testDbClient)
+        private val userDao = PostgresUserDao(testDbClient)
         private val server = Server(eventsDao, userDao, UserAuthenticator(PasswordHasher(), userDao))
         @BeforeClass @JvmStatic fun beforeAll() {
             server.start()
@@ -48,7 +45,7 @@ class EndToEndTest {
 
     @Test
     fun `you must be logged in to create an event`() {
-        driver.get("http://localhost:8080/postNew")
+        driver.get("http://localhost:8080/new")
 
         val banner = driver.findElementByTagName("h2")
 
@@ -59,8 +56,7 @@ class EndToEndTest {
     fun `can create an account, login and have a cookie set`() {
         createAccount("andrew", "password")
         login("andrew", "password")
-        WebDriverWait(driver, 1)
-                .until(textToBePresentInElementLocated(By.id("banner"), "Welcome andrew"))
+        getElementByIdAndThen("banner", { assertThat(it.text, equalTo("Welcome andrew")) })
 
         val cookie = driver.manage().cookies.first().toHttp4kCookie()
         assertThat(cookie.name, equalTo("aa_session_id"))
@@ -86,8 +82,6 @@ class EndToEndTest {
             it.sendKeys(password)
             it.submit()
         })
-
-        WebDriverWait(driver, 1).until(textToBePresentInElementLocated(By.id("banner"), "Account created"))
     }
 
     private fun getElementByIdAndThen(id: String, fn: (WebElement) -> Any): WebElement {

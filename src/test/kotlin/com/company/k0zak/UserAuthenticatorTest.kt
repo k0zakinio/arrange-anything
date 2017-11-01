@@ -1,63 +1,58 @@
 package com.company.k0zak
 
-import com.company.k0zak.dao.EventsDao
 import com.company.k0zak.dao.UserDao
-import com.company.k0zak.db_helpers.TestDBHelper
-import com.company.k0zak.model.Event
+import com.company.k0zak.model.AuthenticatedUser
 import com.company.k0zak.model.User
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.http4k.client.OkHttp
-import org.http4k.core.Method
-import org.http4k.core.Request
-import org.http4k.core.Response
-import org.http4k.core.Status
+import org.http4k.core.*
 import org.http4k.core.cookie.Cookie
 import org.http4k.core.cookie.cookie
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
-
-val fakeHashedValue = "stubbedHashValue"
 
 class UserAuthenticatorTest {
 
-    private val userDao = UserDao(TestDBHelper.testDbClient)
-    private val eventsDao = EventsDao(TestDBHelper.testDbClient)
-    private val server = Server(eventsDao, userDao, UserAuthenticator(FakeHasher(fakeHashedValue), userDao))
 
-    @Before
-    fun before() {
-        TestDBHelper.cleanDatabase()
-        server.start()
-    }
+    @Test
+    fun `should return an unauthorized status code when no cookie is provided`() {
+        val userAuthenticator = UserAuthenticator(FakeHasher("stubbedPasswordHash"), FakeUserDao(null))
+        val underTest: Filter = userAuthenticator.authenticateFilter
+        val handler: HttpHandler = underTest.then { Response(Status.OK) }
 
-    @After
-    fun after() {
-        server.stop()
+        val resp: Response = handler(Request(Method.GET, "/foobar"))
+
+        assertThat(resp.status, equalTo(Status.UNAUTHORIZED))
     }
 
     @Test
-    fun `should use a cookie if session cookie is available and valid`() {
-        val user = User("Andrew", "doesntMatter")
-        userDao.newUser(user)
-        eventsDao.insertEvent(Event("Andrew", "This is my postNew event!"))
-        userDao.newSession(user, fakeHashedValue)
+    fun `should not allow access if the filter is provided with an invalid cookie`() {
+        val userAuthenticator = UserAuthenticator(FakeHasher("stubbedPasswordHash"), FakeUserDao(null))
+        val underTest: Filter = userAuthenticator.authenticateFilter
+        val handler: HttpHandler = underTest.then { Response(Status.OK) }
 
-        val okHttp = OkHttp()
-        val response: Response = okHttp(Request(Method.GET, "http://localhost:8080/view/1").cookie(Cookie("aa_session_id", fakeHashedValue)))
+        val resp: Response = handler(Request(Method.GET, "/foobar").cookie(Cookie("aa_session_id", "someInvalidCookie")))
 
-        assertThat(response.status, equalTo(Status.OK))
+        assertThat(resp.status, equalTo(Status.UNAUTHORIZED))
     }
 
     @Test
-    fun `should not allow access if the session cookie does not exist`() {
-        userDao.newUser(User("Andrew", "doesntMatter"))
-        eventsDao.insertEvent(Event("Andrew", "This is my postNew event!"))
+    fun `should allow access if the filter is provided with a valid cookie`() {
+        val userAuthenticator = UserAuthenticator(FakeHasher("stubbedPasswordHash"), FakeUserDao(User("AnAuthenticatedUser", "foobar")))
+        val underTest: Filter = userAuthenticator.authenticateFilter
+        val handler: HttpHandler = underTest.then { Response(Status.OK) }
 
-        val okHttp = OkHttp()
-        val response: Response = okHttp(Request(Method.GET, "http://localhost:8080/view/1"))
+        val resp: Response = handler(Request(Method.GET, "/foobar").cookie(Cookie("aa_session_id", "someValidCookie")))
 
-        assertThat(response.status, equalTo(Status.UNAUTHORIZED))
+        assertThat(resp.status, equalTo(Status.OK))
     }
+}
+
+class FakeUserDao(private val stubbedUser: User?): UserDao {
+    override fun getUser(username: String): User? = stubbedUser
+
+    override fun newSession(user: User, sessionId: String) = Unit
+
+    override fun newUser(user: User) = Unit
+
+    override fun getUserFromCookie(cookie: String): AuthenticatedUser? = stubbedUser?.let { user -> AuthenticatedUser(user.username) }
 }
