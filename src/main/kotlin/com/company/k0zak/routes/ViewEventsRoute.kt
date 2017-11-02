@@ -35,12 +35,6 @@ class ViewEventsRoute(private val eventsDao: EventsDao, authentication: UserAuth
         }
     }
 
-    val all: HttpHandler = {
-        val allEvents = EventsViewModel(eventsDao.getAllEvents())
-        val renderedView = renderer(allEvents)
-        Response(OK).body(renderedView)
-    }
-
     val myEvents: HttpHandler = {
         val username = it.path("id")!!
         val eventsForUser: List<Event> = eventsDao.getEventsForUser(username)
