@@ -14,7 +14,7 @@ plugins {
 }
 
 project.ext {
-    http4k_version = '2.35.1'
+    http4k_version = '2.36.0'
 }
 
 group 'arrange-anything'

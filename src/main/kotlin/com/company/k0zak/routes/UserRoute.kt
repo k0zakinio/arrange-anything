@@ -1,6 +1,6 @@
 package com.company.k0zak.routes
 
-import com.company.k0zak.UserAuthenticator
+import com.company.k0zak.UserAuth
 import com.company.k0zak.dao.PostgresUserDao
 import com.company.k0zak.model.AuthenticatedUser
 import com.company.k0zak.model.User
@@ -11,7 +11,7 @@ import org.http4k.lens.*
 import org.http4k.template.HandlebarsTemplates
 import java.util.*
 
-class UserRoute(userDao: PostgresUserDao, userAuthenticator: UserAuthenticator) {
+class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
 
     private val renderer = HandlebarsTemplates().CachingClasspath("view")
 
@@ -25,7 +25,7 @@ class UserRoute(userDao: PostgresUserDao, userAuthenticator: UserAuthenticator) 
             val username = usernameField.extract(webForm)
             val password = passwordField.extract(webForm)
 
-            val user = User(username, userAuthenticator.hash(password))
+            val user = User(username, userAuth.hash(password))
             userDao.newUser(user)
 
             Response(Status.SEE_OTHER).header("Location", "/created")
@@ -43,8 +43,8 @@ class UserRoute(userDao: PostgresUserDao, userAuthenticator: UserAuthenticator) 
             val password = passwordField.extract(webForm)
             val user = userDao.getUser(username)
 
-            if(user != null && userAuthenticator.authenticated(user.password, password)) {
-                val sessionId = userAuthenticator.hash(UUID.randomUUID().toString())
+            if(user != null && userAuth.authenticated(user.password, password)) {
+                val sessionId = userAuth.hash(UUID.randomUUID().toString())
                 userDao.newSession(user, sessionId)
                 val cookie = Cookie("aa_session_id", sessionId)
                 val rendered = renderer(AuthenticatedUser(username))

@@ -1,22 +1,22 @@
 package com.company.k0zak.routes
 
-import com.company.k0zak.UserAuthenticator
+import com.company.k0zak.UserAuth
 import com.company.k0zak.dao.EventsDao
+import com.company.k0zak.dao.UserDao
 import com.company.k0zak.model.Event
-import org.http4k.core.HttpHandler
-import org.http4k.core.Response
+import org.http4k.core.*
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
-import org.http4k.core.then
+import org.http4k.core.cookie.cookie
 import org.http4k.routing.path
 import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.ViewModel
 
-class ViewEventsRoute(private val eventsDao: EventsDao, authentication: UserAuthenticator) {
+class ViewEventsRoute(private val eventsDao: EventsDao, userDao: UserDao, auth: UserAuth) {
 
     private val renderer = HandlebarsTemplates().CachingClasspath("view")
 
-    val byId: HttpHandler = authentication.authenticateFilter.then({
+    val byId: HttpHandler = auth.authUserFilter.then({
         val id: String = it.path("id")!!
         val event: Event? = eventsDao.getEventForId(id)
 
@@ -29,16 +29,17 @@ class ViewEventsRoute(private val eventsDao: EventsDao, authentication: UserAuth
         }
     })
 
-    data class EventsViewModel(val events: List<Event>): ViewModel {
+    data class ViewUserEventsModel(val username: String, val events: List<Event>, val pathUser: String): ViewModel {
         override fun template(): String {
-            return "all_events"
+            return "user_events"
         }
     }
 
-    val myEvents: HttpHandler = {
-        val username = it.path("id")!!
-        val eventsForUser: List<Event> = eventsDao.getEventsForUser(username)
-        val renderedView = renderer(EventsViewModel(eventsForUser))
-        Response(OK).body(renderedView)
-    }
+    val forUser: HttpHandler = auth.authUserFilter.then({ req: Request ->
+        val pathUser = req.path("id")!!
+        val user = userDao.getUserFromCookie(req.cookie("aa_session_id")!!.value)!!
+        val allEvents = eventsDao.getEventsForUser(user.username)
+        val rendered = renderer(ViewUserEventsModel(user.username, allEvents, pathUser))
+        Response(Status.OK).body(rendered)
+    })
 }

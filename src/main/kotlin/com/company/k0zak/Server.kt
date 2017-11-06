@@ -11,19 +11,19 @@ import org.http4k.routing.*
 import org.http4k.server.Http4kServer
 import org.http4k.server.Jetty
 
-class Server(private val eventsDao: EventsDao, private val userDao: PostgresUserDao, private val userAuthenticator: UserAuthenticator) {
+class Server(private val eventsDao: EventsDao, private val userDao: PostgresUserDao, private val userAuth: UserAuth) {
     private lateinit var server: Http4kServer
 
     fun start() {
-        val newEvents = EventsRoute(eventsDao, userDao, userAuthenticator)
-        val userRoute = UserRoute(userDao, userAuthenticator)
-        val viewEvents = ViewEventsRoute(eventsDao, userAuthenticator)
+        val newEvents = EventsRoute(eventsDao, userDao, userAuth)
+        val userRoute = UserRoute(userDao, userAuth)
+        val viewEvents = ViewEventsRoute(eventsDao, userDao, userAuth)
 
         val app: RoutingHttpHandler = routes(
                 "/new" bind GET to static(ResourceLoader.Classpath("public/new")),
                 "/new" bind POST to newEvents.postNew,
-                "/users/{id}" bind GET to newEvents.forUser,
-                "/view/{id}" bind GET to viewEvents.byId,
+                "/users/{id}" bind GET to viewEvents.forUser,
+                "/events/{id}" bind GET to viewEvents.byId,
                 "/create-account" bind GET to static(ResourceLoader.Classpath("public/create-account")),
                 "/create-account" bind POST to userRoute.newUser,
                 "/created" bind GET to static(ResourceLoader.Classpath("public/created")),

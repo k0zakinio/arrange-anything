@@ -15,6 +15,6 @@ object Dependencies {
     private val pgClient = JDBCClient(pgConfig)
     val eventsDao = EventsDao(pgClient)
     val userDao: PostgresUserDao = PostgresUserDao(pgClient)
-    val userAuthenticator = UserAuthenticator(PasswordHasher(), userDao)
+    val userAuthenticator = UserAuth(PasswordHasher(), userDao)
 }
 

@@ -10,13 +10,13 @@ import org.http4k.core.cookie.Cookie
 import org.http4k.core.cookie.cookie
 import org.junit.Test
 
-class UserAuthenticatorTest {
+class UserAuthTest {
 
 
     @Test
     fun `should return an unauthorized status code when no cookie is provided`() {
-        val userAuthenticator = UserAuthenticator(FakeHasher("stubbedPasswordHash"), FakeUserDao(null))
-        val underTest: Filter = userAuthenticator.authenticateFilter
+        val userAuthenticator = UserAuth(FakeHasher("stubbedPasswordHash"), FakeUserDao(null))
+        val underTest: Filter = userAuthenticator.authUserFilter
         val handler: HttpHandler = underTest.then { Response(Status.OK) }
 
         val resp: Response = handler(Request(Method.GET, "/foobar"))
@@ -25,20 +25,21 @@ class UserAuthenticatorTest {
     }
 
     @Test
-    fun `should not allow access if the filter is provided with an invalid cookie`() {
-        val userAuthenticator = UserAuthenticator(FakeHasher("stubbedPasswordHash"), FakeUserDao(null))
-        val underTest: Filter = userAuthenticator.authenticateFilter
+    fun `should not allow access if the filter is provided with an invalid cookie, and defaults to static status code html content`() {
+        val userAuthenticator = UserAuth(FakeHasher("stubbedPasswordHash"), FakeUserDao(null))
+        val underTest: Filter = userAuthenticator.authUserFilter
         val handler: HttpHandler = underTest.then { Response(Status.OK) }
 
         val resp: Response = handler(Request(Method.GET, "/foobar").cookie(Cookie("aa_session_id", "someInvalidCookie")))
 
         assertThat(resp.status, equalTo(Status.UNAUTHORIZED))
+        assertThat(resp.bodyString(), equalTo("<h2>You are not authorized to access this resource.</h2>"))
     }
 
     @Test
     fun `should allow access if the filter is provided with a valid cookie`() {
-        val userAuthenticator = UserAuthenticator(FakeHasher("stubbedPasswordHash"), FakeUserDao(User("AnAuthenticatedUser", "foobar")))
-        val underTest: Filter = userAuthenticator.authenticateFilter
+        val userAuthenticator = UserAuth(FakeHasher("stubbedPasswordHash"), FakeUserDao(User("AnAuthenticatedUser", "foobar")))
+        val underTest: Filter = userAuthenticator.authUserFilter
         val handler: HttpHandler = underTest.then { Response(Status.OK) }
 
         val resp: Response = handler(Request(Method.GET, "/foobar").cookie(Cookie("aa_session_id", "someValidCookie")))
