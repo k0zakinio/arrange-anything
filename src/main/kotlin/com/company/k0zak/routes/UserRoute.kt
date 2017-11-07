@@ -28,11 +28,13 @@ class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
             val user = User(username, userAuth.hash(password))
             userDao.newUser(user)
 
+            println("Received request for new user with u:$username and p:$password")
+
             Response(Status.SEE_OTHER).header("Location", "/created")
 
         } catch (e: LensFailure) {
             println(e.message)
-            Response(Status.BAD_REQUEST).body("Unable to create event because fields were missing!")
+            Response(Status.BAD_REQUEST).body("Unable to create user because fields were missing!")
         }
     }
 
