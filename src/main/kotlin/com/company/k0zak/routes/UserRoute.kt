@@ -21,16 +21,24 @@ class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
 
     val newUser: HttpHandler = { req: Request ->
         println("A request has been received to create a new user")
+        println("host: ${req.headers}")
         try {
+            println("val webForm = formBody.extract(req)")
             val webForm = formBody.extract(req)
+
+            println("val username = usernameField.extract(webForm)")
             val username = usernameField.extract(webForm)
+
+            println("val password = passwordField.extract(webForm)")
             val password = passwordField.extract(webForm)
 
+            println("val user = User(username, userAuth.hash(password))")
             val user = User(username, userAuth.hash(password))
+
+            userDao.newUser(user)
             userDao.newUser(user)
 
             println("Received request for new user with u:$username and p:$password")
-            println("host: ${req.header("Host")}")
 
             Response(Status.MOVED_PERMANENTLY).header("Location", "https://www.google.com")
 
