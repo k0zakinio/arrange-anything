@@ -23,11 +23,19 @@ class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
         println("A request has been received to create a new user")
         println("host: ${req.headers}")
         try {
+            println("val webForm = formBody.extract(req)")
             val webForm = formBody.extract(req)
+
+            println("val username = usernameField.extract(webForm)")
             val username = usernameField.extract(webForm)
+
+            println("val password = passwordField.extract(webForm)")
             val password = passwordField.extract(webForm)
+
+            println("val user = User(username, userAuth.hash(password))")
             val user = User(username, userAuth.hash(password))
 
+            println("userDao.newUser(user)")
             userDao.newUser(user)
 
             println("Received request for new user with u:$username and p:$password")

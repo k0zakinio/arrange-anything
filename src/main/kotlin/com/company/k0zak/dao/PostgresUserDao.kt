@@ -7,6 +7,7 @@ import com.company.k0zak.model.User
 class PostgresUserDao(private val dbClient: JDBCClient): UserDao {
 
     override fun newUser(user: User) {
+        println("getting new user from postgres...")
         try {
             println("val preparedStatement = dbClient.preparedStatement(\"INSERT INTO USERS (username, password_hash) VALUES (?, ?)\")")
             val preparedStatement = dbClient.preparedStatement("INSERT INTO USERS (username, password_hash) VALUES (?, ?)")
