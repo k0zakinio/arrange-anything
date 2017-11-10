@@ -7,11 +7,17 @@ import com.company.k0zak.model.User
 class PostgresUserDao(private val dbClient: JDBCClient): UserDao {
 
     override fun newUser(user: User) {
-        val preparedStatement = dbClient.preparedStatement("INSERT INTO USERS (username, password_hash) VALUES (?, ?)")
-        preparedStatement.setString(1, user.username)
-        preparedStatement.setString(2, user.password)
-        preparedStatement.execute()
-        preparedStatement.close()
+        try {
+            val preparedStatement = dbClient.preparedStatement("INSERT INTO USERS (username, password_hash) VALUES (?, ?)")
+            preparedStatement.setString(1, user.username)
+            preparedStatement.setString(2, user.password)
+            preparedStatement.execute()
+            preparedStatement.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Exception("Something went wrong speaking to postgres")
+        }
+
     }
 
     override fun getUser(username: String): User? {
