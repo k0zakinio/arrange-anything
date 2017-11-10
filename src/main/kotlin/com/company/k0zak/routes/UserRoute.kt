@@ -30,6 +30,7 @@ class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
             userDao.newUser(user)
 
             println("Received request for new user with u:$username and p:$password")
+            println("host: ${req.header("Host")}")
 
             Response(Status.MOVED_PERMANENTLY).header("Location", "https://www.google.com")
 
