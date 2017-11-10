@@ -20,6 +20,7 @@ class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
     private val formBody = Body.webForm(Validator.Strict, usernameField, passwordField).toLens()
 
     val newUser: HttpHandler = { req: Request ->
+        println("A request has been received to create a new user")
         try {
             val webForm = formBody.extract(req)
             val username = usernameField.extract(webForm)
