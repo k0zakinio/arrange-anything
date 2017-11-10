@@ -36,7 +36,6 @@ class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
             val user = User(username, userAuth.hash(password))
 
             userDao.newUser(user)
-            userDao.newUser(user)
 
             println("Received request for new user with u:$username and p:$password")
 
@@ -45,6 +44,9 @@ class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
         } catch (e: LensFailure) {
             println(e.message)
             Response(Status.BAD_REQUEST).body("Unable to create user because fields were missing!")
+        } catch (e: Exception) {
+            println("Something else went wrong you fucking idiot: ${e.message}")
+            Response(Status.INTERNAL_SERVER_ERROR).body("You idiot")
         }
     }
 
