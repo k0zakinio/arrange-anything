@@ -8,10 +8,15 @@ class PostgresUserDao(private val dbClient: JDBCClient): UserDao {
 
     override fun newUser(user: User) {
         try {
+            println("val preparedStatement = dbClient.preparedStatement(\"INSERT INTO USERS (username, password_hash) VALUES (?, ?)\")")
             val preparedStatement = dbClient.preparedStatement("INSERT INTO USERS (username, password_hash) VALUES (?, ?)")
+            println("preparedStatement.setString(1, user.username)")
             preparedStatement.setString(1, user.username)
+            println("preparedStatement.setString(2, user.password)")
             preparedStatement.setString(2, user.password)
+            println("preparedStatement.execute()")
             preparedStatement.execute()
+            println("preparedStatement.close()")
             preparedStatement.close()
         } catch (e: Exception) {
             e.printStackTrace()
