@@ -31,7 +31,7 @@ class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
 
             println("Received request for new user with u:$username and p:$password")
 
-            Response(Status.TEMPORARY_REDIRECT).header("Location", "https://www.google.com")
+            Response(Status.MOVED_PERMANENTLY).header("Location", "https://www.google.com")
 
         } catch (e: LensFailure) {
             println(e.message)
