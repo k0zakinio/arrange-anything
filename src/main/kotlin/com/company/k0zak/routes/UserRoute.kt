@@ -66,6 +66,9 @@ class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
             } else Response(Status.FORBIDDEN).body("Invalid username or password!")
         } catch (e:LensFailure) {
             e.printStackTrace()
+            Response(Status.INTERNAL_SERVER_ERROR).body("An lens failure has occurred.")
+        } catch (e: Exception) {
+            e.printStackTrace()
             Response(Status.INTERNAL_SERVER_ERROR).body("An unexpected error has occurred.")
         }
     }
