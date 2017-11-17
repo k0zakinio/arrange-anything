@@ -40,13 +40,12 @@ class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
 
             println("Received request for new user with u:$username and p:$password")
 
-            Response(Status.MOVED_PERMANENTLY).header("Location", "/created")
-
+            Response(Status.SEE_OTHER).header("Location", "/created")
         } catch (e: LensFailure) {
             println(e.message)
             Response(Status.BAD_REQUEST).body("Unable to create user because fields were missing!")
-        } catch (e: Exception) {
-            println("Something else went wrong you fucking idiot: ${e.message}")
+        } catch (t: Throwable) {
+            println("Something else went wrong you fucking idiot: ${t.message}")
             Response(Status.INTERNAL_SERVER_ERROR).body("You idiot")
         }
     }
@@ -66,9 +65,6 @@ class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
                 Response(Status.OK).body(rendered).cookie(cookie)
             } else Response(Status.FORBIDDEN).body("Invalid username or password!")
         } catch (e:LensFailure) {
-            e.printStackTrace()
-            Response(Status.INTERNAL_SERVER_ERROR).body("An lens failure has occurred.")
-        } catch (e: Exception) {
             e.printStackTrace()
             Response(Status.INTERNAL_SERVER_ERROR).body("An unexpected error has occurred.")
         }
