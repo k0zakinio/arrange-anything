@@ -13,19 +13,21 @@ class UserAuth(private val passwordHasher: Hasher, private val userDao: UserDao)
         return passwordHasher.check(currentPassword, storedPassword)
     }
 
-    fun hash(plainText: String): String = passwordHasher.hashString(plainText)
+    fun hash(plainText: String): String {
+        println("trying to hash $plainText")
+        return passwordHasher.hashString(plainText)
+    }
 
     private val failingStatusCodeToStaticHtml = ReplaceResponseContentsWithStaticFile(
             ResourceLoader.Classpath("/public/"),
-            { if(it.status.successful) null else "${it.status.code}.html" })
+            { if (it.status.successful) null else "${it.status.code}.html" })
 
     val authUserFilter: Filter = failingStatusCodeToStaticHtml.then(Filter { next: HttpHandler ->
         { req: Request ->
             val cookie = req.cookies().firstOrNull { it.name == "aa_session_id" }
-            if(cookie == null || (userDao.getUserFromCookie(cookie.value) == null)) {
+            if (cookie == null || (userDao.getUserFromCookie(cookie.value) == null)) {
                 Response(Status.UNAUTHORIZED)
-            }
-            else next(req)
+            } else next(req)
         }
     })
 }

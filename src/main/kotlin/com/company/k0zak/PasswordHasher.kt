@@ -18,9 +18,14 @@ class PasswordHasher: Hasher {
      * suitable for storing in a database.
      * Empty passwords are not supported.  */
     override fun hashString(text: String): String {
+        println("generating hash from String")
         val salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltLen)
         // store the salt with the password
-        return BASE64Encoder().encode(salt) + "$" + hash(text, salt)
+        val hash = hash(text, salt)
+        val encodedSalt = BASE64Encoder().encode(salt)
+        val saltAndHash = encodedSalt + "$" + hash
+        println("Successfully created hashed password $saltAndHash")
+        return saltAndHash
     }
 
     /** Checks whether given plaintext password corresponds
