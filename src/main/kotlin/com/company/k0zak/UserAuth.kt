@@ -15,7 +15,7 @@ class UserAuth(private val passwordHasher: Hasher, private val userDao: UserDao)
 
     fun hash(plainText: String): String = passwordHasher.hashString(plainText)
 
-    val failingStatusCodeToStaticHtml = ReplaceResponseContentsWithStaticFile(
+    private val failingStatusCodeToStaticHtml = ReplaceResponseContentsWithStaticFile(
             ResourceLoader.Classpath("/public/"),
             { if(it.status.successful) null else "${it.status.code}.html" })
 

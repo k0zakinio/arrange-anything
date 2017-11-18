@@ -35,10 +35,9 @@ class PasswordHasher: Hasher {
         return hashOfInput == saltAndPass[1]
     }
 
-    // using PBKDF2 from Sun, an alternative is https://github.com/wg/scrypt
-    // cf. http://www.unlimitednovelty.com/2012/03/dont-use-bcrypt.html
     @Throws(Exception::class)
     private fun hash(password: String?, salt: ByteArray): String {
+        println("trying to hash password")
         if (password.isNullOrEmpty()){
             throw IllegalArgumentException("Empty passwords are not supported.")
         } else {
@@ -46,6 +45,7 @@ class PasswordHasher: Hasher {
             val key = f.generateSecret(PBEKeySpec(
                     password!!.toCharArray(), salt, iterations, desiredKeyLen)
             )
+            println("successfully hashed password")
             return BASE64Encoder().encode(key.encoded)
         }
     }
