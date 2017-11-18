@@ -18,14 +18,9 @@ class PasswordHasher: Hasher {
      * suitable for storing in a database.
      * Empty passwords are not supported.  */
     override fun hashString(text: String): String {
-        println("generating hash from String")
         val salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltLen)
         // store the salt with the password
-        val hash = hash(text, salt)
-        val encodedSalt = BASE64Encoder().encode(salt)
-        val saltAndHash = encodedSalt + "$" + hash
-        println("Successfully created hashed password $saltAndHash")
-        return saltAndHash
+        return BASE64Encoder().encode(salt) + "$" + hash(text, salt)
     }
 
     /** Checks whether given plaintext password corresponds
@@ -42,22 +37,14 @@ class PasswordHasher: Hasher {
 
     @Throws(Exception::class)
     private fun hash(password: String?, salt: ByteArray): String {
-        println("trying to hash password")
         if (password.isNullOrEmpty()){
             throw IllegalArgumentException("Empty passwords are not supported.")
         } else {
-            try {
-                val f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
-                val key = f.generateSecret(PBEKeySpec(
-                        password!!.toCharArray(), salt, iterations, desiredKeyLen)
-                )
-                println("successfully hashed password")
-                return BASE64Encoder().encode(key.encoded)
-            } catch(e: java.lang.Exception) {
-                println("Trying to hash failed with ${e.message!!}")
-                e.printStackTrace()
-                throw RuntimeException("Something went really wrong...")
-            }
+            val f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
+            val key = f.generateSecret(PBEKeySpec(
+                    password!!.toCharArray(), salt, iterations, desiredKeyLen)
+            )
+            return BASE64Encoder().encode(key.encoded)
         }
     }
 }

@@ -14,7 +14,6 @@ class UserAuth(private val passwordHasher: Hasher, private val userDao: UserDao)
     }
 
     fun hash(plainText: String): String {
-        println("trying to hash $plainText")
         return passwordHasher.hashString(plainText)
     }
 

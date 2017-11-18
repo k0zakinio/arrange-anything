@@ -20,33 +20,18 @@ class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
     private val formBody = Body.webForm(Validator.Strict, usernameField, passwordField).toLens()
 
     val newUser: HttpHandler = { req: Request ->
-        println("A request has been received to create a new user")
-        println("host: ${req.headers}")
         try {
-            println("val webForm = formBody.extract(req)")
             val webForm = formBody.extract(req)
-
-            println("val username = usernameField.extract(webForm)")
             val username = usernameField.extract(webForm)
-
-            println("val password = passwordField.extract(webForm)")
             val password = passwordField.extract(webForm)
-
-            println("val user = User(username, userAuth.hash(password))")
             val user = User(username, userAuth.hash(password))
 
-            println("userDao.newUser(user)")
             userDao.newUser(user)
-
-            println("Received request for new user with u:$username and p:$password")
 
             Response(Status.SEE_OTHER).header("Location", "/created")
         } catch (e: LensFailure) {
-            println(e.message)
+            e.printStackTrace()
             Response(Status.BAD_REQUEST).body("Unable to create user because fields were missing!")
-        } catch (t: Throwable) {
-            println("Something else went wrong you fucking idiot: ${t.message}")
-            Response(Status.INTERNAL_SERVER_ERROR).body("You idiot")
         }
     }
 

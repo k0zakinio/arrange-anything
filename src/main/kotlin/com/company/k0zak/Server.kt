@@ -35,10 +35,6 @@ class Server(private val eventsDao: EventsDao, private val userDao: PostgresUser
         println("Server started on port: $port")
         this.server = Jetty(port).toServer(app).start()
     }
-
-    fun stop() {
-        server.stop()
-    }
 }
 
 fun main(args: Array<String>) {

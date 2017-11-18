@@ -26,9 +26,8 @@ class EventsRoute(private val eventsDao: EventsDao, private val userDao: UserDao
                     ?.let { user -> eventsDao.insertEvent(Event(user.username, title)) }
 
             responseLens.inject(JsonResponse("A postNew event has been created with the title $title"), Response(Status.CREATED))
-
         } catch (e: LensFailure) {
-            println(e.message)
+            e.printStackTrace()
             responseLens.inject(JsonResponse("Unable to create event because fields were missing!"), Response(Status.BAD_REQUEST))
         }
     })
