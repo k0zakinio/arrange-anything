@@ -46,12 +46,18 @@ class PasswordHasher: Hasher {
         if (password.isNullOrEmpty()){
             throw IllegalArgumentException("Empty passwords are not supported.")
         } else {
-            val f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
-            val key = f.generateSecret(PBEKeySpec(
-                    password!!.toCharArray(), salt, iterations, desiredKeyLen)
-            )
-            println("successfully hashed password")
-            return BASE64Encoder().encode(key.encoded)
+            try {
+                val f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
+                val key = f.generateSecret(PBEKeySpec(
+                        password!!.toCharArray(), salt, iterations, desiredKeyLen)
+                )
+                println("successfully hashed password")
+                return BASE64Encoder().encode(key.encoded)
+            } catch(e: java.lang.Exception) {
+                println("Trying to hash failed with ${e.message!!}")
+                e.printStackTrace()
+                throw RuntimeException("Something went really wrong...")
+            }
         }
     }
 }
