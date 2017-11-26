@@ -13,13 +13,12 @@ class PasswordHasher: Hasher {
     private val iterations = 20 * 1000
     private val saltLen = 32
     private val desiredKeyLen = 256
+    private val salt = SecureRandom().generateSeed(saltLen)
 
-    /** Computes a salted PBKDF2 hash of given plaintext password
+    /** Computes a salted hash of given plaintext password
      * suitable for storing in a database.
      * Empty passwords are not supported.  */
     override fun hashString(text: String): String {
-        val salt = SecureRandom().generateSeed(saltLen)
-        // store the salt with the password
         return BASE64Encoder().encode(salt) + "$" + hash(text, salt)
     }
 
