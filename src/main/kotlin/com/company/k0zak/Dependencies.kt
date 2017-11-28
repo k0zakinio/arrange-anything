@@ -4,6 +4,7 @@ import com.company.k0zak.dao.EventsDao
 import com.company.k0zak.dao.PostgresUserDao
 import com.company.k0zak.db.JDBCClient
 import com.company.k0zak.db.JDBCConfig
+import java.time.format.DateTimeFormatter
 
 object Dependencies {
     private val pgConfig = JDBCConfig(
@@ -13,7 +14,8 @@ object Dependencies {
             driver = "org.postgresql.Driver"
     )
     private val pgClient = JDBCClient(pgConfig)
-    val eventsDao = EventsDao(pgClient)
+    private val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+    val eventsDao = EventsDao(pgClient, LocalDateTimeParser(dateTimeFormatter), LocalDateTimePrinter(dateTimeFormatter))
     val userDao: PostgresUserDao = PostgresUserDao(pgClient)
     val userAuthenticator = UserAuth(PasswordHasher(), userDao)
 }

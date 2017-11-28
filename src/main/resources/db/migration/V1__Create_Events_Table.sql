@@ -2,5 +2,6 @@ CREATE TABLE EVENTS (
   id SERIAL PRIMARY KEY,
   title VARCHAR NOT NULL,
   owner_name VARCHAR NOT NULL,
+  event_date VARCHAR NOT NULL,
   created_at TIMESTAMP DEFAULT NOW()
 );

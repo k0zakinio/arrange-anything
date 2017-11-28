@@ -23,7 +23,7 @@ class ViewEventsRoute(private val eventsDao: EventsDao, userDao: UserDao, auth: 
         if (event == null) {
             Response(NOT_FOUND).body("Event with id: $id was not found!")
         } else {
-            val viewModel = Event(event.owner, event.title)
+            val viewModel = Event(event.owner, event.title, event.date)
             val renderedView = renderer(viewModel)
             Response(OK).body(renderedView)
         }

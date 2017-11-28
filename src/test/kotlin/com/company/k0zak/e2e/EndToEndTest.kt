@@ -1,8 +1,6 @@
 package com.company.k0zak.e2e
 
-import com.company.k0zak.PasswordHasher
-import com.company.k0zak.Server
-import com.company.k0zak.UserAuth
+import com.company.k0zak.*
 import com.company.k0zak.dao.EventsDao
 import com.company.k0zak.dao.PostgresUserDao
 import com.company.k0zak.db_helpers.TestDBHelper
@@ -17,13 +15,16 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.openqa.selenium.By
+import org.openqa.selenium.Keys
 import org.openqa.selenium.WebElement
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import org.openqa.selenium.Cookie as SeleniumCookie
 
 class EndToEndTest {
 
     companion object {
-        private val eventsDao = EventsDao(testDbClient)
+        private val eventsDao = EventsDao(testDbClient, LocalDateTimeParser(DateTimeFormatter.ISO_LOCAL_DATE_TIME), LocalDateTimePrinter(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
         private val userDao = PostgresUserDao(testDbClient)
         private val server = Server(eventsDao, userDao, UserAuth(PasswordHasher(), userDao))
         private var driver = TestDrivers.getChromeDriver()
@@ -60,7 +61,12 @@ class EndToEndTest {
     fun `user can view an event they have created`() {
         createAndLogin("testy", "password")
         driver.get("http://localhost:8080/new")
-        getElementByAndThen(By.id("title"), { it.sendKeys("This is my test Event!"); it.submit() })
+        driver.executeScript("document.getElementById('event_date').value = '2017-06-13T12:00'")
+
+        getElementByAndThen(By.id("title")) {
+            it.sendKeys("This is my test Event!")
+            it.submit()
+        }
 
         driver.get("http://localhost:8080/users/testy")
 
@@ -69,31 +75,31 @@ class EndToEndTest {
 
     private fun createAndLogin(username: String, password: String) {
         driver.get("http://localhost:8080/create-account")
-        getElementByAndThen(By.id("username"), {it.sendKeys(username)})
-        getElementByAndThen(By.id("password"), {it.sendKeys(password); it.submit()})
+        getElementByAndThen(By.id("username")) {it.sendKeys(username)}
+        getElementByAndThen(By.id("password")) {it.sendKeys(password); it.submit()}
         driver.get("http://localhost:8080/login")
-        getElementByAndThen(By.id("username"), {it.sendKeys(username)})
-        getElementByAndThen(By.id("password"), {it.sendKeys(password); it.submit()})
+        getElementByAndThen(By.id("username")) {it.sendKeys(username)}
+        getElementByAndThen(By.id("password")) {it.sendKeys(password); it.submit()}
     }
 
     private fun login(username: String, password: String) {
         getElementByAndThen(By.id("login"), { it.click() })
 
-        getElementByAndThen(By.id("username"), { it.sendKeys(username) })
-        getElementByAndThen(By.id("password"), {
+        getElementByAndThen(By.id("username")) { it.sendKeys(username) }
+        getElementByAndThen(By.id("password")) {
             it.sendKeys(password)
             it.submit()
-        })
+        }
     }
 
     private fun createAccount(username: String, password: String) {
         driver.get("http://localhost:8080/create-account")
 
-        getElementByAndThen(By.id("username"), { it.sendKeys(username) })
-        getElementByAndThen(By.id("password"), {
+        getElementByAndThen(By.id("username")) { it.sendKeys(username) }
+        getElementByAndThen(By.id("password")) {
             it.sendKeys(password)
             it.submit()
-        })
+        }
     }
 
     private fun getElementByAndThen(by: By, fn: (WebElement) -> Any): WebElement {
