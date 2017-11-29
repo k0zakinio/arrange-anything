@@ -19,7 +19,7 @@ class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
     private val passwordField = FormField.string().required("password")
     private val formBody = Body.webForm(Validator.Strict, usernameField, passwordField).toLens()
 
-    val newUser: HttpHandler = { req: Request ->
+    val new: HttpHandler = { req: Request ->
         try {
             val webForm = formBody.extract(req)
             val username = usernameField.extract(webForm)
@@ -35,7 +35,7 @@ class UserRoute(userDao: PostgresUserDao, userAuth: UserAuth) {
         }
     }
 
-    val loginUser: HttpHandler = { req: Request ->
+    val login: HttpHandler = { req: Request ->
         try {
             val webForm = formBody.extract(req)
             val username = usernameField.extract(webForm)

@@ -14,7 +14,7 @@ import org.http4k.routing.path
 import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.ViewModel
 
-class ViewEventsRoute(private val eventsDao: EventsDao, userDao: UserDao, auth: UserAuth, private val eventDatePrinter: EventDatePrinter) {
+class ViewEventsRoute(eventsDao: EventsDao, userDao: UserDao, auth: UserAuth, eventDatePrinter: EventDatePrinter) {
 
     private val renderer = HandlebarsTemplates().CachingClasspath("view")
 
@@ -31,12 +31,6 @@ class ViewEventsRoute(private val eventsDao: EventsDao, userDao: UserDao, auth: 
         }
     })
 
-    data class ViewUserEventsModel(val username: String, val events: List<EventViewModel>, val pathUser: String): ViewModel {
-        override fun template(): String {
-            return "user_events"
-        }
-    }
-
     val forUser: HttpHandler = auth.authUserFilter.then({ req: Request ->
         val pathUser = req.path("id")!!
         val user = userDao.getUserFromCookie(req.cookie("aa_session_id")!!.value)!!
@@ -44,4 +38,10 @@ class ViewEventsRoute(private val eventsDao: EventsDao, userDao: UserDao, auth: 
         val rendered = renderer(ViewUserEventsModel(user.username, allEvents, pathUser))
         Response(Status.OK).body(rendered)
     })
+
+    private data class ViewUserEventsModel(val username: String, val events: List<EventViewModel>, val pathUser: String): ViewModel {
+        override fun template(): String {
+            return "user_events"
+        }
+    }
 }

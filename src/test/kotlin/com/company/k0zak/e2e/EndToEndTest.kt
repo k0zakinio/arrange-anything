@@ -59,6 +59,7 @@ class EndToEndTest {
     fun `user can view an event they have created`() {
         createAndLogin("testy", "password")
         driver.get("http://localhost:8080/new")
+        // work around to update the datepicker in headless mode
         driver.executeScript("document.getElementById('event_date').value = '2017-06-13T12:00'")
 
         getElementByAndThen(By.id("title")) {

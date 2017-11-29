@@ -25,10 +25,10 @@ class Server(private val eventsDao: EventsDao, private val userDao: PostgresUser
                 "/users/{id}" bind GET to viewEvents.forUser,
                 "/events/{id}" bind GET to viewEvents.byId,
                 "/create-account" bind GET to static(ResourceLoader.Classpath("public/create-account")),
-                "/create-account" bind POST to userRoute.newUser,
+                "/create-account" bind POST to userRoute.new,
                 "/created" bind GET to static(ResourceLoader.Classpath("public/created")),
                 "/login" bind GET to static(ResourceLoader.Classpath("public/login")),
-                "/login" bind POST to userRoute.loginUser
+                "/login" bind POST to userRoute.login
         )
 
         val port = 8080

@@ -13,8 +13,7 @@ class EventDatePrinter(private val dateTimeFormatter: DateTimeFormatter) {
     }
 
     companion object {
-        val localDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
-        val DAYS_LOOKUP = IntRange(1, 31).map { it.toLong() to getOrdinal(it) }.toMap()
+        private val DAYS_LOOKUP = IntRange(1, 31).map { it.toLong() to getOrdinal(it) }.toMap()
 
         val viewFormatter = DateTimeFormatterBuilder()
                 .appendText(ChronoField.DAY_OF_MONTH, DAYS_LOOKUP)
@@ -31,7 +30,7 @@ class EventDatePrinter(private val dateTimeFormatter: DateTimeFormatter) {
                 .appendLiteral(" ")
                 .parseCaseInsensitive()
                 .appendPattern("a")
-                .toFormatter(Locale.ENGLISH)
+                .toFormatter(Locale.ENGLISH)!!
 
         private fun getOrdinal(n: Int): String {
             if (n in 11..13) {
