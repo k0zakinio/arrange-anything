@@ -15,7 +15,7 @@ object Dependencies {
     )
     private val pgClient = JDBCClient(pgConfig)
     private val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
-    val eventsDao = EventsDao(pgClient, LocalDateTimeParser(dateTimeFormatter), LocalDateTimePrinter(dateTimeFormatter))
+    val eventsDao = EventsDao(pgClient, EventDateParser(dateTimeFormatter), EventDatePrinter(dateTimeFormatter))
     val userDao: PostgresUserDao = PostgresUserDao(pgClient)
     val userAuthenticator = UserAuth(PasswordHasher(), userDao)
 }

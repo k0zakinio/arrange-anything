@@ -17,7 +17,7 @@ class Server(private val eventsDao: EventsDao, private val userDao: PostgresUser
     fun start() {
         val newEvents = EventsRoute(eventsDao, userDao, userAuth)
         val userRoute = UserRoute(userDao, userAuth)
-        val viewEvents = ViewEventsRoute(eventsDao, userDao, userAuth)
+        val viewEvents = ViewEventsRoute(eventsDao, userDao, userAuth, EventDatePrinter(EventDatePrinter.viewFormatter))
 
         val app: RoutingHttpHandler = routes(
                 "/new" bind GET to static(ResourceLoader.Classpath("public/new")),

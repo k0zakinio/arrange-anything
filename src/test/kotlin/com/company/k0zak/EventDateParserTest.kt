@@ -6,8 +6,8 @@ import org.junit.Test
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class LocalDateTimeParserTest {
-    private val parser = LocalDateTimeParser(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+class EventDateParserTest {
+    private val parser = EventDateParser(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
     @Test
     fun `can parse from ISO_LOCAL_DATE_TIME format`() {

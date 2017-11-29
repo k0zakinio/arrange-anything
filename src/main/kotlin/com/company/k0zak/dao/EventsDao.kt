@@ -1,12 +1,12 @@
 package com.company.k0zak.dao
 
-import com.company.k0zak.LocalDateTimeParser
-import com.company.k0zak.LocalDateTimePrinter
+import com.company.k0zak.EventDateParser
+import com.company.k0zak.EventDatePrinter
 import com.company.k0zak.db.JDBCClient
 import com.company.k0zak.model.Event
 import java.sql.ResultSet
 
-class EventsDao(private val dbClient: JDBCClient, private val dateParser: LocalDateTimeParser, private val datePrinter: LocalDateTimePrinter) {
+class EventsDao(private val dbClient: JDBCClient, private val dateParser: EventDateParser, private val datePrinter: EventDatePrinter) {
     fun insertEvent(event: Event) {
         val statement = dbClient.preparedStatement("INSERT INTO EVENTS (owner_name, title, event_date) VALUES (?, ?, ?)")
         statement.setString(1, event.owner)

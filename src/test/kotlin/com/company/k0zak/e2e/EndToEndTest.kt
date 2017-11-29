@@ -15,16 +15,14 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.openqa.selenium.By
-import org.openqa.selenium.Keys
 import org.openqa.selenium.WebElement
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import org.openqa.selenium.Cookie as SeleniumCookie
 
 class EndToEndTest {
 
     companion object {
-        private val eventsDao = EventsDao(testDbClient, LocalDateTimeParser(DateTimeFormatter.ISO_LOCAL_DATE_TIME), LocalDateTimePrinter(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+        private val eventsDao = EventsDao(testDbClient, EventDateParser(DateTimeFormatter.ISO_LOCAL_DATE_TIME), EventDatePrinter(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
         private val userDao = PostgresUserDao(testDbClient)
         private val server = Server(eventsDao, userDao, UserAuth(PasswordHasher(), userDao))
         private var driver = TestDrivers.getChromeDriver()
@@ -71,6 +69,7 @@ class EndToEndTest {
         driver.get("http://localhost:8080/users/testy")
 
         getElementByAndThen(By.className("event-title"), { assertThat(it.text, equalTo("This is my test Event!")) })
+        getElementByAndThen(By.className("event-date"), { assertThat(it.text, equalTo("13th June 2017, 12:00:00 PM")) })
     }
 
     private fun createAndLogin(username: String, password: String) {

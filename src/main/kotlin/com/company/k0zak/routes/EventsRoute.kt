@@ -1,6 +1,5 @@
 package com.company.k0zak.routes
 
-import com.company.k0zak.LocalDateTimeParser
 import com.company.k0zak.UserAuth
 import com.company.k0zak.dao.EventsDao
 import com.company.k0zak.dao.UserDao

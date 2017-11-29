@@ -1,7 +1,7 @@
 package com.company.k0zak.dao
 
-import com.company.k0zak.LocalDateTimeParser
-import com.company.k0zak.LocalDateTimePrinter
+import com.company.k0zak.EventDateParser
+import com.company.k0zak.EventDatePrinter
 import com.company.k0zak.db_helpers.TestDBHelper
 import com.company.k0zak.db_helpers.TestDBHelper.testDbClient
 import com.company.k0zak.model.Event
@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter
 
 class EventsDaoTest {
 
-    private val eventsDao = EventsDao(testDbClient, LocalDateTimeParser(DateTimeFormatter.ISO_LOCAL_DATE_TIME), LocalDateTimePrinter(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+    private val eventsDao = EventsDao(testDbClient, EventDateParser(DateTimeFormatter.ISO_LOCAL_DATE_TIME), EventDatePrinter(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
 
     private val someDate = LocalDateTime.of(2017, 1, 1, 0, 0)
     private val username = "test_owner"

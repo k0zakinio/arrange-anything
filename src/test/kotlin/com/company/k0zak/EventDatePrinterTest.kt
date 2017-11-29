@@ -6,8 +6,8 @@ import org.junit.Test
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class LocalDateTimePrinterTest {
-    private val printer = LocalDateTimePrinter(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+class EventDatePrinterTest {
+    private val printer = EventDatePrinter(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     @Test
     fun `can print into ISO-8601 standard`() {
         val ldt = LocalDateTime.of(2017, 6, 13, 12, 0)
